@@ -604,7 +604,7 @@ export default function DrawResultModal() {
                         type="small" 
                         style={{ color: "#FFFFFF", fontWeight: "700" }}
                       >
-                        {positionLabel}
+                        <Feather name="user" size={14} color="#FFFFFF" />
                       </ThemedText>
                     </View>
                     <View style={{ flex: 1 }}>
@@ -615,11 +615,6 @@ export default function DrawResultModal() {
                       >
                         {type === "secret_santa" ? result.split(" ➔ ")[0] : result}
                       </ThemedText>
-                      {type === "secret_santa" && (
-                        <ThemedText type="caption" style={{ color: theme.textSecondary }}>
-                          Toque em compartilhar para ver seu par
-                        </ThemedText>
-                      )}
                     </View>
                     {type === "secret_santa" ? (
                       <Pressable 
