@@ -277,12 +277,12 @@ export default function HomeScreen() {
 
         {mode === "list" || mode === "secret_santa" ? (
           <Animated.View entering={FadeInDown.delay(200).springify()} style={styles.section}>
-            <View style={[styles.inputContainer, { backgroundColor: theme.cardBackground, borderColor: isDark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.03)" }]}>
+            <Card elevation={1} style={styles.inputCard}>
               <TextInput
                 style={[
                   styles.textInput,
                   {
-                    backgroundColor: isDark ? theme.backgroundSecondary : "rgba(0,0,0,0.02)",
+                    backgroundColor: theme.backgroundSecondary,
                     color: theme.text,
                   },
                 ]}
@@ -299,14 +299,14 @@ export default function HomeScreen() {
 
               <View style={styles.actionRow}>
                 <Pressable
-                  style={[styles.iconButton, { backgroundColor: isDark ? theme.backgroundSecondary : "rgba(0,0,0,0.02)" }]}
+                  style={[styles.iconButton, { backgroundColor: theme.backgroundSecondary }]}
                   onPress={handlePaste}
                 >
                   <Feather name="clipboard" size={18} color={theme.link} />
                 </Pressable>
 
                 <Pressable
-                  style={[styles.iconButton, { backgroundColor: isDark ? theme.backgroundSecondary : "rgba(0,0,0,0.02)" }]}
+                  style={[styles.iconButton, { backgroundColor: theme.backgroundSecondary }]}
                   onPress={handleImport}
                 >
                   <Feather name="upload" size={18} color={theme.link} />
@@ -322,10 +322,10 @@ export default function HomeScreen() {
                   </ThemedText>
                 </Pressable>
               </View>
-            </View>
+            </Card>
 
             {hasItems ? (
-              <View style={[styles.itemsContainer, { backgroundColor: theme.cardBackground, borderColor: isDark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.03)" }]}>
+              <Card elevation={1} style={styles.itemsCard}>
                 <View style={styles.itemsHeader}>
                   <View style={styles.itemsCountBadge}>
                     <ThemedText type="small" style={{ color: theme.link, fontWeight: "700" }}>
@@ -351,7 +351,7 @@ export default function HomeScreen() {
                     />
                   ))}
                 </View>
-              </View>
+              </Card>
             ) : (
               <View style={styles.emptyState}>
                 <View style={[styles.emptyIconContainer, { backgroundColor: theme.link + "15" }]}>
@@ -374,7 +374,7 @@ export default function HomeScreen() {
           </Animated.View>
         ) : (
           <Animated.View entering={FadeInDown.delay(200).springify()} style={styles.section}>
-            <View style={[styles.numberCard, { backgroundColor: theme.cardBackground, borderColor: isDark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.03)" }]}>
+            <Card elevation={1} style={styles.numberCard}>
               <ThemedText type="small" style={[styles.sectionLabel, { color: theme.textSecondary }]}>
                 INTERVALO DE NÚMEROS
               </ThemedText>
@@ -411,13 +411,13 @@ export default function HomeScreen() {
                   {maxNumber - minNumber + 1} números possíveis
                 </ThemedText>
               </View>
-            </View>
+            </Card>
           </Animated.View>
         )}
 
         <Animated.View entering={FadeInDown.delay(300).springify()}>
           {mode !== "secret_santa" && (
-            <View style={[styles.settingsContainer, { backgroundColor: theme.cardBackground, borderColor: isDark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.03)" }]}>
+            <Card elevation={1} style={styles.settingsCard}>
               <ThemedText type="small" style={[styles.sectionLabel, { color: theme.textSecondary }]}>
                 CONFIGURAÇÕES DO SORTEIO
               </ThemedText>
@@ -484,7 +484,7 @@ export default function HomeScreen() {
                   onValueChange={setOrderedMode}
                 />
               </View>
-            </View>
+            </Card>
           )}
         </Animated.View>
 
