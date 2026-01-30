@@ -1,11 +1,12 @@
 import React from "react";
-import { View, StyleSheet, Pressable, Linking, Platform } from "react-native";
+import { View, StyleSheet, Pressable } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import Constants from "expo-constants";
+import Animated, { FadeInDown } from "react-native-reanimated";
 
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
@@ -14,16 +15,16 @@ import { ToggleSwitch } from "@/components/ToggleSwitch";
 import { SegmentedControl } from "@/components/SegmentedControl";
 import { useTheme } from "@/hooks/useTheme";
 import { useSettings } from "@/context/SettingsContext";
-import { Spacing, BorderRadius } from "@/constants/theme";
+import { Spacing, BorderRadius, Shadows } from "@/constants/theme";
 import { KeyboardAwareScrollViewCompat } from "@/components/KeyboardAwareScrollViewCompat";
 
-const themeOptions = ["Claro", "Escuro", "Sistema"];
+const themeOptions = ["Claro", "Escuro", "Auto"];
 
 export default function SettingsScreen() {
   const insets = useSafeAreaInsets();
   const headerHeight = useHeaderHeight();
   const tabBarHeight = useBottomTabBarHeight();
-  const { theme } = useTheme();
+  const { theme, isDark } = useTheme();
   const { settings, updateTheme, toggleSound, toggleAnimations } = useSettings();
 
   const themeIndex =
@@ -62,17 +63,26 @@ export default function SettingsScreen() {
         ]}
         scrollIndicatorInsets={{ bottom: insets.bottom }}
       >
-        <View style={styles.section}>
+        <Animated.View entering={FadeInDown.delay(100).springify()} style={styles.section}>
           <ThemedText type="small" style={[styles.sectionTitle, { color: theme.textSecondary }]}>
             APARÊNCIA
           </ThemedText>
-          <Card elevation={1} style={styles.card}>
+          <View 
+            style={[
+              styles.card, 
+              { 
+                backgroundColor: theme.cardBackground,
+                borderColor: isDark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.03)",
+              },
+              !isDark && Shadows.small,
+            ]}
+          >
             <View style={styles.settingRow}>
               <View style={styles.settingLabel}>
                 <View style={[styles.iconWrapper, { backgroundColor: theme.link + "15" }]}>
-                  <Feather name="sun" size={18} color={theme.link} />
+                  <Feather name="moon" size={18} color={theme.link} />
                 </View>
-                <ThemedText>Tema</ThemedText>
+                <ThemedText style={{ fontWeight: "600" }}>Tema do App</ThemedText>
               </View>
             </View>
             <SegmentedControl
@@ -81,23 +91,32 @@ export default function SettingsScreen() {
               onChange={handleThemeChange}
               style={styles.themeControl}
             />
-          </Card>
-        </View>
+          </View>
+        </Animated.View>
 
-        <View style={styles.section}>
+        <Animated.View entering={FadeInDown.delay(200).springify()} style={styles.section}>
           <ThemedText type="small" style={[styles.sectionTitle, { color: theme.textSecondary }]}>
-            EFEITOS
+            EFEITOS E FEEDBACK
           </ThemedText>
-          <Card elevation={1} style={styles.card}>
+          <View 
+            style={[
+              styles.card, 
+              { 
+                backgroundColor: theme.cardBackground,
+                borderColor: isDark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.03)",
+              },
+              !isDark && Shadows.small,
+            ]}
+          >
             <View style={styles.settingRow}>
               <View style={styles.settingLabel}>
                 <View style={[styles.iconWrapper, { backgroundColor: theme.accent + "15" }]}>
-                  <Feather name="volume-2" size={18} color={theme.accent} />
+                  <Feather name="smartphone" size={18} color={theme.accent} />
                 </View>
-                <View>
-                  <ThemedText>Sons</ThemedText>
+                <View style={styles.settingTextContainer}>
+                  <ThemedText style={{ fontWeight: "600" }}>Vibração</ThemedText>
                   <ThemedText type="small" style={{ color: theme.textSecondary }}>
-                    Feedback sonoro e haptico
+                    Feedback tátil nas ações
                   </ThemedText>
                 </View>
               </View>
@@ -109,12 +128,12 @@ export default function SettingsScreen() {
             <View style={styles.settingRow}>
               <View style={styles.settingLabel}>
                 <View style={[styles.iconWrapper, { backgroundColor: theme.success + "15" }]}>
-                  <Feather name="zap" size={18} color={theme.success} />
+                  <Feather name="play-circle" size={18} color={theme.success} />
                 </View>
-                <View>
-                  <ThemedText>Animações</ThemedText>
+                <View style={styles.settingTextContainer}>
+                  <ThemedText style={{ fontWeight: "600" }}>Animações</ThemedText>
                   <ThemedText type="small" style={{ color: theme.textSecondary }}>
-                    Animações de transição
+                    Transições e efeitos visuais
                   </ThemedText>
                 </View>
               </View>
@@ -123,34 +142,50 @@ export default function SettingsScreen() {
                 onValueChange={handleToggleAnimations}
               />
             </View>
-          </Card>
-        </View>
+          </View>
+        </Animated.View>
 
-        <View style={styles.section}>
+        <Animated.View entering={FadeInDown.delay(300).springify()} style={styles.section}>
           <ThemedText type="small" style={[styles.sectionTitle, { color: theme.textSecondary }]}>
-            SOBRE
+            INFORMAÇÕES
           </ThemedText>
-          <Card elevation={1} style={styles.card}>
+          <View 
+            style={[
+              styles.card, 
+              { 
+                backgroundColor: theme.cardBackground,
+                borderColor: isDark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.03)",
+              },
+              !isDark && Shadows.small,
+            ]}
+          >
             <View style={styles.settingRow}>
               <View style={styles.settingLabel}>
                 <View style={[styles.iconWrapper, { backgroundColor: theme.textSecondary + "15" }]}>
                   <Feather name="info" size={18} color={theme.textSecondary} />
                 </View>
-                <ThemedText>Versão</ThemedText>
+                <ThemedText style={{ fontWeight: "600" }}>Versão</ThemedText>
               </View>
-              <ThemedText style={{ color: theme.textSecondary }}>{appVersion}</ThemedText>
+              <View style={[styles.versionBadge, { backgroundColor: theme.backgroundSecondary }]}>
+                <ThemedText type="small" style={{ color: theme.textSecondary }}>
+                  v{appVersion}
+                </ThemedText>
+              </View>
             </View>
-          </Card>
-        </View>
+          </View>
+        </Animated.View>
 
-        <View style={styles.footer}>
-          <ThemedText type="small" style={{ color: theme.textSecondary, textAlign: "center" }}>
-            Sorteio - Sorteador Digital
+        <Animated.View entering={FadeInDown.delay(400).springify()} style={styles.footer}>
+          <View style={[styles.logoContainer, { backgroundColor: theme.link + "10" }]}>
+            <Feather name="shuffle" size={24} color={theme.link} />
+          </View>
+          <ThemedText type="body" style={[styles.footerTitle, { fontFamily: "Nunito_700Bold" }]}>
+            Sorteio
           </ThemedText>
           <ThemedText type="small" style={{ color: theme.textSecondary, textAlign: "center" }}>
-            Feito com amor
+            Sorteador digital simples, justo e transparente
           </ThemedText>
-        </View>
+        </Animated.View>
       </KeyboardAwareScrollViewCompat>
     </ThemedView>
   );
@@ -177,6 +212,8 @@ const styles = StyleSheet.create({
   },
   card: {
     padding: Spacing.lg,
+    borderRadius: BorderRadius.md,
+    borderWidth: 1,
   },
   settingRow: {
     flexDirection: "row",
@@ -189,22 +226,43 @@ const styles = StyleSheet.create({
     gap: Spacing.md,
     flex: 1,
   },
+  settingTextContainer: {
+    flex: 1,
+    gap: 2,
+  },
   iconWrapper: {
-    width: 36,
-    height: 36,
+    width: 40,
+    height: 40,
     borderRadius: BorderRadius.xs,
     alignItems: "center",
     justifyContent: "center",
   },
   divider: {
     height: 1,
-    marginVertical: Spacing.md,
+    marginVertical: Spacing.lg,
   },
   themeControl: {
-    marginTop: Spacing.md,
+    marginTop: Spacing.lg,
+  },
+  versionBadge: {
+    paddingVertical: Spacing.xs,
+    paddingHorizontal: Spacing.md,
+    borderRadius: BorderRadius.full,
   },
   footer: {
+    alignItems: "center",
     paddingVertical: Spacing["2xl"],
-    gap: Spacing.xs,
+    gap: Spacing.sm,
+  },
+  logoContainer: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: Spacing.sm,
+  },
+  footerTitle: {
+    fontSize: 20,
   },
 });

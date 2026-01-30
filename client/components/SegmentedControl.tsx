@@ -6,10 +6,12 @@ import Animated, {
   withSpring,
   WithSpringConfig,
 } from "react-native-reanimated";
+import * as Haptics from "expo-haptics";
 
 import { ThemedText } from "@/components/ThemedText";
 import { useTheme } from "@/hooks/useTheme";
-import { Spacing, BorderRadius } from "@/constants/theme";
+import { useSettings } from "@/context/SettingsContext";
+import { Spacing, BorderRadius, Shadows } from "@/constants/theme";
 
 interface SegmentedControlProps {
   options: string[];
@@ -31,10 +33,29 @@ export function SegmentedControl({
   onChange,
   style,
 }: SegmentedControlProps) {
-  const { theme } = useTheme();
+  const { theme, isDark } = useTheme();
+  const { settings } = useSettings();
+
+  const handlePress = (index: number) => {
+    if (index !== selectedIndex) {
+      if (settings.soundEnabled) {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      }
+      onChange(index);
+    }
+  };
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.backgroundSecondary }, style]}>
+    <View 
+      style={[
+        styles.container, 
+        { 
+          backgroundColor: isDark ? theme.backgroundDefault : theme.backgroundSecondary,
+          borderColor: isDark ? "rgba(255,255,255,0.05)" : "transparent",
+        }, 
+        style
+      ]}
+    >
       {options.map((option, index) => {
         const isSelected = index === selectedIndex;
 
@@ -43,9 +64,15 @@ export function SegmentedControl({
             key={option}
             style={[
               styles.option,
-              isSelected && [styles.selectedOption, { backgroundColor: theme.backgroundDefault }],
+              isSelected && [
+                styles.selectedOption, 
+                { 
+                  backgroundColor: isDark ? theme.backgroundSecondary : theme.backgroundDefault,
+                },
+                !isDark && Shadows.small,
+              ],
             ]}
-            onPress={() => onChange(index)}
+            onPress={() => handlePress(index)}
           >
             <ThemedText
               type="body"
@@ -67,28 +94,24 @@ export function SegmentedControl({
 const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
-    borderRadius: BorderRadius.xs,
+    borderRadius: BorderRadius.sm,
     padding: Spacing.xs,
+    borderWidth: 1,
   },
   option: {
     flex: 1,
-    paddingVertical: Spacing.sm,
+    paddingVertical: Spacing.sm + 2,
     paddingHorizontal: Spacing.md,
-    borderRadius: BorderRadius.xs - 2,
+    borderRadius: BorderRadius.xs,
     alignItems: "center",
     justifyContent: "center",
   },
-  selectedOption: {
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 1,
-  },
+  selectedOption: {},
   optionText: {
     fontWeight: "500",
   },
   selectedText: {
-    fontWeight: "600",
+    fontWeight: "700",
+    fontFamily: "Nunito_700Bold",
   },
 });

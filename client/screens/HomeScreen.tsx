@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import {
   View,
   StyleSheet,
@@ -22,7 +22,10 @@ import Animated, {
   withRepeat,
   withSequence,
   withTiming,
+  withDelay,
   Easing,
+  FadeInDown,
+  interpolateColor,
 } from "react-native-reanimated";
 
 import { ThemedText } from "@/components/ThemedText";
@@ -61,6 +64,8 @@ export default function HomeScreen() {
   const [allowRepetition, setAllowRepetition] = useState(false);
 
   const pulseScale = useSharedValue(1);
+  const pulseGlow = useSharedValue(0);
+  const shimmerPosition = useSharedValue(0);
 
   const canDraw =
     mode === "list"
@@ -68,23 +73,44 @@ export default function HomeScreen() {
       : maxNumber >= minNumber &&
         (allowRepetition || maxNumber - minNumber + 1 >= winnersCount);
 
-  React.useEffect(() => {
-    if (canDraw) {
+  useEffect(() => {
+    if (canDraw && settings.animationsEnabled) {
       pulseScale.value = withRepeat(
         withSequence(
-          withTiming(1.02, { duration: 800, easing: Easing.inOut(Easing.ease) }),
-          withTiming(1, { duration: 800, easing: Easing.inOut(Easing.ease) })
+          withTiming(1.03, { duration: 1000, easing: Easing.inOut(Easing.ease) }),
+          withTiming(1, { duration: 1000, easing: Easing.inOut(Easing.ease) })
         ),
         -1,
         true
       );
+      pulseGlow.value = withRepeat(
+        withSequence(
+          withTiming(1, { duration: 1000 }),
+          withTiming(0.5, { duration: 1000 })
+        ),
+        -1,
+        true
+      );
+      shimmerPosition.value = withRepeat(
+        withSequence(
+          withTiming(1, { duration: 2000, easing: Easing.inOut(Easing.ease) }),
+          withTiming(0, { duration: 0 })
+        ),
+        -1
+      );
     } else {
       pulseScale.value = withSpring(1);
+      pulseGlow.value = withTiming(0);
     }
-  }, [canDraw]);
+  }, [canDraw, settings.animationsEnabled]);
 
   const drawButtonStyle = useAnimatedStyle(() => ({
     transform: [{ scale: pulseScale.value }],
+  }));
+
+  const drawButtonGlowStyle = useAnimatedStyle(() => ({
+    opacity: pulseGlow.value * 0.4,
+    transform: [{ scale: 1 + pulseGlow.value * 0.1 }],
   }));
 
   const parseItems = useCallback((text: string) => {
@@ -210,32 +236,33 @@ export default function HomeScreen() {
           styles.content,
           {
             paddingTop: headerHeight + Spacing.xl,
-            paddingBottom: tabBarHeight + Spacing["2xl"],
+            paddingBottom: tabBarHeight + Spacing["3xl"],
           },
         ]}
         scrollIndicatorInsets={{ bottom: insets.bottom }}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
-        <SegmentedControl
-          options={["Lista", "Números"]}
-          selectedIndex={mode === "list" ? 0 : 1}
-          onChange={(index) => setMode(index === 0 ? "list" : "number")}
-        />
+        <Animated.View entering={FadeInDown.delay(100).springify()}>
+          <SegmentedControl
+            options={["Lista", "Números"]}
+            selectedIndex={mode === "list" ? 0 : 1}
+            onChange={(index) => setMode(index === 0 ? "list" : "number")}
+          />
+        </Animated.View>
 
         {mode === "list" ? (
-          <View style={styles.section}>
-            <View style={styles.inputRow}>
+          <Animated.View entering={FadeInDown.delay(200).springify()} style={styles.section}>
+            <Card elevation={1} style={styles.inputCard}>
               <TextInput
                 style={[
                   styles.textInput,
                   {
-                    backgroundColor: theme.inputBackground,
-                    borderColor: theme.border,
+                    backgroundColor: theme.backgroundSecondary,
                     color: theme.text,
                   },
                 ]}
-                placeholder="Digite itens (um por linha ou separados por vírgula)"
+                placeholder="Digite itens (um por linha ou vírgula)"
                 placeholderTextColor={theme.textSecondary}
                 value={inputText}
                 onChangeText={setInputText}
@@ -245,49 +272,49 @@ export default function HomeScreen() {
                 onSubmitEditing={handleAddItems}
                 blurOnSubmit={false}
               />
-            </View>
 
-            <View style={styles.actionRow}>
-              <Pressable
-                style={[styles.secondaryButton, { borderColor: theme.link }]}
-                onPress={handlePaste}
-              >
-                <Feather name="clipboard" size={16} color={theme.link} />
-                <ThemedText style={[styles.secondaryButtonText, { color: theme.link }]}>
-                  Colar
-                </ThemedText>
-              </Pressable>
+              <View style={styles.actionRow}>
+                <Pressable
+                  style={[styles.iconButton, { backgroundColor: theme.backgroundSecondary }]}
+                  onPress={handlePaste}
+                >
+                  <Feather name="clipboard" size={18} color={theme.link} />
+                </Pressable>
 
-              <Pressable
-                style={[styles.secondaryButton, { borderColor: theme.link }]}
-                onPress={handleImport}
-              >
-                <Feather name="upload" size={16} color={theme.link} />
-                <ThemedText style={[styles.secondaryButtonText, { color: theme.link }]}>
-                  Importar
-                </ThemedText>
-              </Pressable>
+                <Pressable
+                  style={[styles.iconButton, { backgroundColor: theme.backgroundSecondary }]}
+                  onPress={handleImport}
+                >
+                  <Feather name="upload" size={18} color={theme.link} />
+                </Pressable>
 
-              <Pressable
-                style={[styles.primarySmallButton, { backgroundColor: theme.link }]}
-                onPress={handleAddItems}
-              >
-                <Feather name="plus" size={16} color="#FFFFFF" />
-                <ThemedText style={[styles.secondaryButtonText, { color: "#FFFFFF" }]}>
-                  Adicionar
-                </ThemedText>
-              </Pressable>
-            </View>
+                <Pressable
+                  style={[styles.addButton, { backgroundColor: theme.link }]}
+                  onPress={handleAddItems}
+                >
+                  <Feather name="plus" size={18} color="#FFFFFF" />
+                  <ThemedText style={styles.addButtonText}>
+                    Adicionar
+                  </ThemedText>
+                </Pressable>
+              </View>
+            </Card>
 
             {hasItems ? (
               <Card elevation={1} style={styles.itemsCard}>
                 <View style={styles.itemsHeader}>
-                  <ThemedText type="small" style={{ color: theme.textSecondary }}>
-                    {items.length} {items.length === 1 ? "item" : "itens"}
+                  <View style={styles.itemsCountBadge}>
+                    <ThemedText type="small" style={{ color: theme.link, fontWeight: "700" }}>
+                      {items.length}
+                    </ThemedText>
+                  </View>
+                  <ThemedText type="body" style={{ flex: 1, fontWeight: "600" }}>
+                    {items.length === 1 ? "item" : "itens"} na lista
                   </ThemedText>
-                  <Pressable onPress={handleClearAll}>
+                  <Pressable onPress={handleClearAll} style={styles.clearButton}>
+                    <Feather name="trash-2" size={16} color={theme.error} />
                     <ThemedText type="small" style={{ color: theme.error }}>
-                      Limpar tudo
+                      Limpar
                     </ThemedText>
                   </Pressable>
                 </View>
@@ -309,20 +336,29 @@ export default function HomeScreen() {
                   resizeMode="contain"
                 />
                 <ThemedText
+                  type="h4"
+                  style={[styles.emptyTitle, { color: theme.text }]}
+                >
+                  Adicione participantes
+                </ThemedText>
+                <ThemedText
                   type="body"
                   style={[styles.emptyText, { color: theme.textSecondary }]}
                 >
-                  Adicione itens para iniciar seu sorteio
+                  Digite nomes, números ou palavras para começar o sorteio
                 </ThemedText>
               </View>
             )}
-          </View>
+          </Animated.View>
         ) : (
-          <View style={styles.section}>
+          <Animated.View entering={FadeInDown.delay(200).springify()} style={styles.section}>
             <Card elevation={1} style={styles.numberCard}>
+              <ThemedText type="small" style={[styles.sectionLabel, { color: theme.textSecondary }]}>
+                INTERVALO DE NÚMEROS
+              </ThemedText>
               <View style={styles.numberRow}>
                 <View style={styles.numberInputWrapper}>
-                  <ThemedText type="small" style={{ color: theme.textSecondary }}>
+                  <ThemedText type="small" style={{ color: theme.textSecondary, marginBottom: Spacing.xs }}>
                     Mínimo
                   </ThemedText>
                   <NumberInput
@@ -333,10 +369,10 @@ export default function HomeScreen() {
                   />
                 </View>
                 <View style={styles.numberDivider}>
-                  <ThemedText style={{ color: theme.textSecondary }}>até</ThemedText>
+                  <Feather name="arrow-right" size={20} color={theme.textSecondary} />
                 </View>
                 <View style={styles.numberInputWrapper}>
-                  <ThemedText type="small" style={{ color: theme.textSecondary }}>
+                  <ThemedText type="small" style={{ color: theme.textSecondary, marginBottom: Spacing.xs }}>
                     Máximo
                   </ThemedText>
                   <NumberInput
@@ -347,80 +383,115 @@ export default function HomeScreen() {
                   />
                 </View>
               </View>
-              <ThemedText
-                type="small"
-                style={[styles.rangeInfo, { color: theme.textSecondary }]}
-              >
-                {maxNumber - minNumber + 1} números possíveis
-              </ThemedText>
+              <View style={[styles.rangeInfoBadge, { backgroundColor: theme.link + "15" }]}>
+                <Feather name="hash" size={14} color={theme.link} />
+                <ThemedText type="small" style={{ color: theme.link, fontWeight: "600" }}>
+                  {maxNumber - minNumber + 1} números possíveis
+                </ThemedText>
+              </View>
             </Card>
-          </View>
+          </Animated.View>
         )}
 
-        <Card elevation={1} style={styles.settingsCard}>
-          <View style={styles.settingRow}>
-            <View style={styles.settingLabel}>
-              <Feather name="award" size={20} color={theme.link} />
-              <ThemedText style={styles.settingText}>Quantidade de vencedores</ThemedText>
+        <Animated.View entering={FadeInDown.delay(300).springify()}>
+          <Card elevation={1} style={styles.settingsCard}>
+            <ThemedText type="small" style={[styles.sectionLabel, { color: theme.textSecondary }]}>
+              CONFIGURAÇÕES DO SORTEIO
+            </ThemedText>
+            
+            <View style={styles.settingRow}>
+              <View style={styles.settingLabel}>
+                <View style={[styles.settingIcon, { backgroundColor: theme.accent + "15" }]}>
+                  <Feather name="award" size={18} color={theme.accent} />
+                </View>
+                <View>
+                  <ThemedText style={{ fontWeight: "600" }}>Vencedores</ThemedText>
+                  <ThemedText type="small" style={{ color: theme.textSecondary }}>
+                    Quantidade a sortear
+                  </ThemedText>
+                </View>
+              </View>
+              <NumberInput
+                value={winnersCount}
+                onChange={setWinnersCount}
+                min={1}
+                max={10}
+                compact
+              />
             </View>
-            <NumberInput
-              value={winnersCount}
-              onChange={setWinnersCount}
-              min={1}
-              max={10}
-              compact
+
+            <View style={[styles.divider, { backgroundColor: theme.border }]} />
+
+            <View style={styles.settingRow}>
+              <View style={styles.settingLabel}>
+                <View style={[styles.settingIcon, { backgroundColor: theme.success + "15" }]}>
+                  <Feather name="repeat" size={18} color={theme.success} />
+                </View>
+                <View>
+                  <ThemedText style={{ fontWeight: "600" }}>Repetição</ThemedText>
+                  <ThemedText type="small" style={{ color: theme.textSecondary }}>
+                    Permitir itens repetidos
+                  </ThemedText>
+                </View>
+              </View>
+              <ToggleSwitch
+                value={allowRepetition}
+                onValueChange={setAllowRepetition}
+              />
+            </View>
+          </Card>
+        </Animated.View>
+
+        <Animated.View entering={FadeInDown.delay(400).springify()} style={styles.drawSection}>
+          <View style={styles.drawButtonContainer}>
+            <Animated.View
+              style={[
+                styles.drawButtonGlow,
+                { backgroundColor: theme.link },
+                drawButtonGlowStyle,
+              ]}
             />
+            <AnimatedPressable
+              style={[
+                styles.drawButton,
+                {
+                  backgroundColor: canDraw ? theme.link : theme.backgroundTertiary,
+                },
+                drawButtonStyle,
+              ]}
+              onPress={performDraw}
+              disabled={!canDraw}
+            >
+              <View style={styles.drawButtonContent}>
+                <View style={[styles.drawIcon, { backgroundColor: canDraw ? "rgba(255,255,255,0.2)" : "transparent" }]}>
+                  <Feather
+                    name="shuffle"
+                    size={28}
+                    color={canDraw ? "#FFFFFF" : theme.textSecondary}
+                  />
+                </View>
+                <ThemedText
+                  type="h3"
+                  style={[
+                    styles.drawButtonText,
+                    { color: canDraw ? "#FFFFFF" : theme.textSecondary },
+                  ]}
+                >
+                  Sortear Agora
+                </ThemedText>
+              </View>
+            </AnimatedPressable>
           </View>
 
-          <View style={[styles.divider, { backgroundColor: theme.border }]} />
-
-          <View style={styles.settingRow}>
-            <View style={styles.settingLabel}>
-              <Feather name="repeat" size={20} color={theme.link} />
-              <ThemedText style={styles.settingText}>Permitir repetição</ThemedText>
+          {!canDraw && mode === "list" && items.length > 0 && (
+            <View style={[styles.warningBadge, { backgroundColor: theme.warning + "15" }]}>
+              <Feather name="alert-circle" size={16} color={theme.warning} />
+              <ThemedText type="small" style={{ color: theme.warning, flex: 1 }}>
+                Adicione mais itens ou reduza o número de vencedores
+              </ThemedText>
             </View>
-            <ToggleSwitch
-              value={allowRepetition}
-              onValueChange={setAllowRepetition}
-            />
-          </View>
-        </Card>
-
-        <AnimatedPressable
-          style={[
-            styles.drawButton,
-            {
-              backgroundColor: canDraw ? theme.link : theme.backgroundTertiary,
-            },
-            drawButtonStyle,
-          ]}
-          onPress={performDraw}
-          disabled={!canDraw}
-        >
-          <Feather
-            name="shuffle"
-            size={24}
-            color={canDraw ? "#FFFFFF" : theme.textSecondary}
-          />
-          <ThemedText
-            type="h4"
-            style={[
-              styles.drawButtonText,
-              { color: canDraw ? "#FFFFFF" : theme.textSecondary },
-            ]}
-          >
-            Sortear
-          </ThemedText>
-        </AnimatedPressable>
-
-        {!canDraw && mode === "list" && items.length > 0 && (
-          <ThemedText
-            type="small"
-            style={[styles.warningText, { color: theme.warning }]}
-          >
-            Adicione mais itens ou reduza o número de vencedores
-          </ThemedText>
-        )}
+          )}
+        </Animated.View>
       </ScrollView>
     </ThemedView>
   );
@@ -440,39 +511,39 @@ const styles = StyleSheet.create({
   section: {
     gap: Spacing.md,
   },
-  inputRow: {
-    gap: Spacing.sm,
+  inputCard: {
+    padding: Spacing.lg,
   },
   textInput: {
-    borderWidth: 1,
     borderRadius: BorderRadius.xs,
     padding: Spacing.md,
     fontSize: 16,
     minHeight: 100,
+    marginBottom: Spacing.md,
   },
   actionRow: {
     flexDirection: "row",
     gap: Spacing.sm,
+    alignItems: "center",
   },
-  secondaryButton: {
+  iconButton: {
+    width: 44,
+    height: 44,
+    borderRadius: BorderRadius.xs,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  addButton: {
+    flex: 1,
     flexDirection: "row",
     alignItems: "center",
-    gap: Spacing.xs,
-    paddingVertical: Spacing.sm,
-    paddingHorizontal: Spacing.md,
-    borderWidth: 1,
+    justifyContent: "center",
+    gap: Spacing.sm,
+    height: 44,
     borderRadius: BorderRadius.xs,
   },
-  primarySmallButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: Spacing.xs,
-    paddingVertical: Spacing.sm,
-    paddingHorizontal: Spacing.md,
-    borderRadius: BorderRadius.xs,
-  },
-  secondaryButtonText: {
-    fontSize: 14,
+  addButtonText: {
+    color: "#FFFFFF",
     fontWeight: "600",
   },
   itemsCard: {
@@ -480,9 +551,24 @@ const styles = StyleSheet.create({
   },
   itemsHeader: {
     flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center",
     marginBottom: Spacing.md,
+    gap: Spacing.sm,
+  },
+  itemsCountBadge: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: "#2563EB15",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  clearButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.xs,
+    paddingVertical: Spacing.xs,
+    paddingHorizontal: Spacing.sm,
   },
   chipsContainer: {
     flexDirection: "row",
@@ -492,18 +578,28 @@ const styles = StyleSheet.create({
   emptyState: {
     alignItems: "center",
     paddingVertical: Spacing["3xl"],
-    gap: Spacing.lg,
+    gap: Spacing.sm,
   },
   emptyImage: {
-    width: 120,
-    height: 120,
-    opacity: 0.7,
+    width: 140,
+    height: 140,
+    opacity: 0.8,
+    marginBottom: Spacing.md,
+  },
+  emptyTitle: {
+    fontFamily: "Nunito_700Bold",
   },
   emptyText: {
     textAlign: "center",
+    paddingHorizontal: Spacing.xl,
   },
   numberCard: {
     padding: Spacing.lg,
+  },
+  sectionLabel: {
+    fontWeight: "600",
+    letterSpacing: 0.5,
+    marginBottom: Spacing.md,
   },
   numberRow: {
     flexDirection: "row",
@@ -512,14 +608,19 @@ const styles = StyleSheet.create({
   },
   numberInputWrapper: {
     flex: 1,
-    gap: Spacing.xs,
   },
   numberDivider: {
     paddingBottom: Spacing.md,
   },
-  rangeInfo: {
-    marginTop: Spacing.md,
-    textAlign: "center",
+  rangeInfoBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: Spacing.sm,
+    marginTop: Spacing.lg,
+    paddingVertical: Spacing.sm,
+    paddingHorizontal: Spacing.md,
+    borderRadius: BorderRadius.xs,
   },
   settingsCard: {
     padding: Spacing.lg,
@@ -535,26 +636,59 @@ const styles = StyleSheet.create({
     gap: Spacing.md,
     flex: 1,
   },
-  settingText: {
-    flex: 1,
+  settingIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: BorderRadius.xs,
+    alignItems: "center",
+    justifyContent: "center",
   },
   divider: {
     height: 1,
-    marginVertical: Spacing.md,
+    marginVertical: Spacing.lg,
+  },
+  drawSection: {
+    gap: Spacing.md,
+    marginTop: Spacing.md,
+  },
+  drawButtonContainer: {
+    position: "relative",
+  },
+  drawButtonGlow: {
+    position: "absolute",
+    top: 4,
+    left: 4,
+    right: 4,
+    bottom: -4,
+    borderRadius: BorderRadius.md,
   },
   drawButton: {
+    borderRadius: BorderRadius.md,
+    overflow: "hidden",
+  },
+  drawButtonContent: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     gap: Spacing.md,
-    paddingVertical: Spacing.lg,
-    borderRadius: BorderRadius.md,
-    marginTop: Spacing.md,
+    paddingVertical: Spacing.xl,
+  },
+  drawIcon: {
+    width: 52,
+    height: 52,
+    borderRadius: 26,
+    alignItems: "center",
+    justifyContent: "center",
   },
   drawButtonText: {
     fontWeight: "700",
+    fontFamily: "Nunito_700Bold",
   },
-  warningText: {
-    textAlign: "center",
+  warningBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.sm,
+    padding: Spacing.md,
+    borderRadius: BorderRadius.xs,
   },
 });

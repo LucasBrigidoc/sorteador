@@ -9,7 +9,7 @@ import Animated, {
 
 import { ThemedText } from "@/components/ThemedText";
 import { useTheme } from "@/hooks/useTheme";
-import { Spacing, BorderRadius } from "@/constants/theme";
+import { Spacing, BorderRadius, Shadows } from "@/constants/theme";
 
 interface CardProps {
   elevation?: number;
@@ -34,7 +34,7 @@ const getBackgroundColorForElevation = (
 ): string => {
   switch (elevation) {
     case 1:
-      return theme.backgroundDefault;
+      return theme.cardBackground;
     case 2:
       return theme.backgroundSecondary;
     case 3:
@@ -54,7 +54,7 @@ export function Card({
   onPress,
   style,
 }: CardProps) {
-  const { theme } = useTheme();
+  const { theme, isDark } = useTheme();
   const scale = useSharedValue(1);
 
   const cardBackgroundColor = getBackgroundColorForElevation(elevation, theme);
@@ -64,11 +64,15 @@ export function Card({
   }));
 
   const handlePressIn = () => {
-    scale.value = withSpring(0.98, springConfig);
+    if (onPress) {
+      scale.value = withSpring(0.98, springConfig);
+    }
   };
 
   const handlePressOut = () => {
-    scale.value = withSpring(1, springConfig);
+    if (onPress) {
+      scale.value = withSpring(1, springConfig);
+    }
   };
 
   return (
@@ -80,7 +84,9 @@ export function Card({
         styles.card,
         {
           backgroundColor: cardBackgroundColor,
+          borderColor: isDark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.03)",
         },
+        !isDark && Shadows.small,
         animatedStyle,
         style,
       ]}
@@ -102,8 +108,8 @@ export function Card({
 
 const styles = StyleSheet.create({
   card: {
-    padding: Spacing.xl,
-    borderRadius: BorderRadius["2xl"],
+    borderRadius: BorderRadius.md,
+    borderWidth: 1,
   },
   cardTitle: {
     marginBottom: Spacing.sm,

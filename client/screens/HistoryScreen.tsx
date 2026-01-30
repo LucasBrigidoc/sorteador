@@ -13,7 +13,7 @@ import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
-import Animated, { FadeInDown } from "react-native-reanimated";
+import Animated, { FadeInDown, FadeIn } from "react-native-reanimated";
 
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
@@ -21,7 +21,7 @@ import { Card } from "@/components/Card";
 import { useTheme } from "@/hooks/useTheme";
 import { useRaffle, RaffleHistoryItem } from "@/context/RaffleContext";
 import { useSettings } from "@/context/SettingsContext";
-import { Spacing, BorderRadius } from "@/constants/theme";
+import { Spacing, BorderRadius, Shadows } from "@/constants/theme";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
@@ -33,12 +33,12 @@ function formatDate(dateString: string): string {
   const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
 
   if (diffDays === 0) {
-    return `Hoje às ${date.toLocaleTimeString("pt-BR", {
+    return `Hoje, ${date.toLocaleTimeString("pt-BR", {
       hour: "2-digit",
       minute: "2-digit",
     })}`;
   } else if (diffDays === 1) {
-    return `Ontem às ${date.toLocaleTimeString("pt-BR", {
+    return `Ontem, ${date.toLocaleTimeString("pt-BR", {
       hour: "2-digit",
       minute: "2-digit",
     })}`;
@@ -48,7 +48,6 @@ function formatDate(dateString: string): string {
     return date.toLocaleDateString("pt-BR", {
       day: "2-digit",
       month: "short",
-      year: "numeric",
     });
   }
 }
@@ -58,7 +57,7 @@ export default function HistoryScreen() {
   const headerHeight = useHeaderHeight();
   const tabBarHeight = useBottomTabBarHeight();
   const navigation = useNavigation<NavigationProp>();
-  const { theme } = useTheme();
+  const { theme, isDark } = useTheme();
   const { history, clearHistory } = useRaffle();
   const { settings } = useSettings();
 
@@ -83,25 +82,32 @@ export default function HistoryScreen() {
     ({ item, index }: { item: RaffleHistoryItem; index: number }) => {
       const typeLabel =
         item.type === "list"
-          ? `Lista (${item.items.length} itens)`
-          : `Números (${item.minNumber} - ${item.maxNumber})`;
+          ? `${item.items.length} participantes`
+          : `${item.minNumber} - ${item.maxNumber}`;
 
       const resultsPreview =
         item.results.length > 2
-          ? `${item.results.slice(0, 2).join(", ")} e mais ${item.results.length - 2}`
+          ? `${item.results.slice(0, 2).join(", ")} +${item.results.length - 2}`
           : item.results.join(", ");
 
       return (
         <Animated.View
           entering={settings.animationsEnabled ? FadeInDown.delay(index * 50).springify() : undefined}
         >
-          <Card
-            elevation={1}
+          <Pressable
             onPress={() => handleItemPress(item)}
-            style={styles.historyCard}
+            style={({ pressed }) => [
+              styles.historyCard,
+              { 
+                backgroundColor: theme.cardBackground,
+                borderColor: isDark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.03)",
+              },
+              !isDark && Shadows.small,
+              pressed && styles.cardPressed,
+            ]}
           >
-            <View style={styles.cardHeader}>
-              <View style={styles.cardHeaderLeft}>
+            <View style={styles.cardContent}>
+              <View style={styles.cardLeft}>
                 <View
                   style={[
                     styles.typeIcon,
@@ -109,44 +115,50 @@ export default function HistoryScreen() {
                   ]}
                 >
                   <Feather
-                    name={item.type === "list" ? "list" : "hash"}
-                    size={16}
+                    name={item.type === "list" ? "users" : "hash"}
+                    size={18}
                     color={theme.link}
                   />
                 </View>
-                <View>
+                <View style={styles.cardInfo}>
                   <ThemedText type="body" style={{ fontWeight: "600" }}>
-                    {typeLabel}
+                    {item.type === "list" ? "Sorteio de Lista" : "Sorteio Numérico"}
                   </ThemedText>
                   <ThemedText type="small" style={{ color: theme.textSecondary }}>
-                    {formatDate(item.date)}
+                    {typeLabel}
                   </ThemedText>
                 </View>
               </View>
-              <Feather name="chevron-right" size={20} color={theme.textSecondary} />
+              <View style={styles.cardRight}>
+                <ThemedText type="caption" style={{ color: theme.textSecondary }}>
+                  {formatDate(item.date)}
+                </ThemedText>
+                <Feather name="chevron-right" size={18} color={theme.textSecondary} />
+              </View>
             </View>
 
-            <View style={[styles.resultsSection, { borderTopColor: theme.border }]}>
-              <View style={styles.resultLabel}>
-                <Feather name="award" size={14} color={theme.accent} />
-                <ThemedText type="small" style={{ color: theme.textSecondary }}>
-                  {item.results.length}{" "}
-                  {item.results.length === 1 ? "vencedor" : "vencedores"}
+            <View style={[styles.resultsSection, { backgroundColor: theme.accent + "08" }]}>
+              <View style={styles.resultIconContainer}>
+                <Feather name="award" size={16} color={theme.accent} />
+              </View>
+              <View style={styles.resultsInfo}>
+                <ThemedText type="caption" style={{ color: theme.textSecondary }}>
+                  {item.results.length === 1 ? "Vencedor" : `${item.results.length} vencedores`}
+                </ThemedText>
+                <ThemedText
+                  type="body"
+                  style={[styles.resultsText, { color: theme.accent }]}
+                  numberOfLines={1}
+                >
+                  {resultsPreview}
                 </ThemedText>
               </View>
-              <ThemedText
-                type="body"
-                style={[styles.resultsText, { color: theme.link }]}
-                numberOfLines={1}
-              >
-                {resultsPreview}
-              </ThemedText>
             </View>
-          </Card>
+          </Pressable>
         </Animated.View>
       );
     },
-    [theme, handleItemPress, settings.animationsEnabled]
+    [theme, isDark, handleItemPress, settings.animationsEnabled]
   );
 
   const ListEmptyComponent = useCallback(
@@ -157,14 +169,14 @@ export default function HistoryScreen() {
           style={styles.emptyImage}
           resizeMode="contain"
         />
-        <ThemedText type="h4" style={{ marginTop: Spacing.lg }}>
+        <ThemedText type="h4" style={[styles.emptyTitle, { fontFamily: "Nunito_700Bold" }]}>
           Nenhum sorteio ainda
         </ThemedText>
         <ThemedText
           type="body"
           style={[styles.emptySubtext, { color: theme.textSecondary }]}
         >
-          Seus sorteios aparecerão aqui
+          Realize seu primeiro sorteio e ele aparecerá aqui
         </ThemedText>
       </View>
     ),
@@ -174,16 +186,27 @@ export default function HistoryScreen() {
   const ListHeaderComponent = useCallback(
     () =>
       history.length > 0 ? (
-        <View style={styles.listHeader}>
-          <ThemedText type="small" style={{ color: theme.textSecondary }}>
-            {history.length} {history.length === 1 ? "sorteio" : "sorteios"}
-          </ThemedText>
-          <Pressable onPress={handleClearHistory}>
+        <Animated.View 
+          entering={FadeIn}
+          style={styles.listHeader}
+        >
+          <View style={styles.headerLeft}>
+            <View style={[styles.countBadge, { backgroundColor: theme.link + "15" }]}>
+              <ThemedText type="small" style={{ color: theme.link, fontWeight: "700" }}>
+                {history.length}
+              </ThemedText>
+            </View>
+            <ThemedText type="body" style={{ fontWeight: "600" }}>
+              {history.length === 1 ? "sorteio realizado" : "sorteios realizados"}
+            </ThemedText>
+          </View>
+          <Pressable onPress={handleClearHistory} style={styles.clearAllButton}>
+            <Feather name="trash-2" size={16} color={theme.error} />
             <ThemedText type="small" style={{ color: theme.error }}>
-              Limpar tudo
+              Limpar
             </ThemedText>
           </Pressable>
-        </View>
+        </Animated.View>
       ) : null,
     [history.length, theme, handleClearHistory]
   );
@@ -227,56 +250,104 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: Spacing.md,
+    marginBottom: Spacing.lg,
+  },
+  headerLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.sm,
+  },
+  countBadge: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  clearAllButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.xs,
+    paddingVertical: Spacing.xs,
+    paddingHorizontal: Spacing.sm,
   },
   separator: {
     height: Spacing.md,
   },
   historyCard: {
-    padding: Spacing.lg,
+    borderRadius: BorderRadius.md,
+    borderWidth: 1,
+    overflow: "hidden",
   },
-  cardHeader: {
+  cardPressed: {
+    opacity: 0.9,
+    transform: [{ scale: 0.99 }],
+  },
+  cardContent: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    padding: Spacing.lg,
   },
-  cardHeaderLeft: {
+  cardLeft: {
     flexDirection: "row",
     alignItems: "center",
     gap: Spacing.md,
+    flex: 1,
   },
   typeIcon: {
-    width: 36,
-    height: 36,
-    borderRadius: BorderRadius.xs,
+    width: 44,
+    height: 44,
+    borderRadius: BorderRadius.sm,
     alignItems: "center",
     justifyContent: "center",
   },
-  resultsSection: {
-    marginTop: Spacing.md,
-    paddingTop: Spacing.md,
-    borderTopWidth: 1,
+  cardInfo: {
+    flex: 1,
+    gap: 2,
   },
-  resultLabel: {
+  cardRight: {
+    alignItems: "flex-end",
+    gap: Spacing.xs,
+  },
+  resultsSection: {
     flexDirection: "row",
     alignItems: "center",
-    gap: Spacing.xs,
-    marginBottom: Spacing.xs,
+    paddingVertical: Spacing.md,
+    paddingHorizontal: Spacing.lg,
+    gap: Spacing.md,
+  },
+  resultIconContainer: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: "rgba(245, 158, 11, 0.15)",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  resultsInfo: {
+    flex: 1,
+    gap: 2,
   },
   resultsText: {
-    fontWeight: "600",
+    fontWeight: "700",
+    fontFamily: "Nunito_700Bold",
   },
   emptyState: {
     alignItems: "center",
     paddingVertical: Spacing["3xl"],
   },
   emptyImage: {
-    width: 150,
-    height: 150,
-    opacity: 0.7,
+    width: 160,
+    height: 160,
+    opacity: 0.75,
+    marginBottom: Spacing.lg,
+  },
+  emptyTitle: {
+    marginBottom: Spacing.xs,
   },
   emptySubtext: {
-    marginTop: Spacing.sm,
     textAlign: "center",
+    paddingHorizontal: Spacing.xl,
   },
 });
