@@ -69,9 +69,9 @@ export default function HomeScreen() {
 
   const canDraw =
     mode === "list"
-      ? items.length > 0 && (allowRepetition || items.length >= winnersCount)
+      ? items.length > 0 && (orderedMode || allowRepetition || items.length >= winnersCount)
       : maxNumber >= minNumber &&
-        (allowRepetition || maxNumber - minNumber + 1 >= winnersCount);
+        (orderedMode || allowRepetition || maxNumber - minNumber + 1 >= winnersCount);
 
   useEffect(() => {
     if (canDraw && settings.animationsEnabled) {
@@ -193,7 +193,10 @@ export default function HomeScreen() {
       }
     }
 
-    for (let i = 0; i < winnersCount; i++) {
+    // Se o modo de ranking (orderedMode) estiver ativado, sorteamos todos os itens da lista
+    const finalWinnersCount = orderedMode ? pool.length : winnersCount;
+
+    for (let i = 0; i < finalWinnersCount; i++) {
       if (pool.length === 0) break;
       const randomIndex = Math.floor(Math.random() * pool.length);
       results.push(pool[randomIndex]);
@@ -207,12 +210,12 @@ export default function HomeScreen() {
       items: mode === "list" ? items : [],
       minNumber: mode === "number" ? minNumber : undefined,
       maxNumber: mode === "number" ? maxNumber : undefined,
-      winnersCount,
+      winnersCount: finalWinnersCount,
       allowRepetition,
       results,
     });
 
-    navigation.navigate("DrawResult", { results, type: mode, orderedMode: winnersCount > 1 && orderedMode });
+    navigation.navigate("DrawResult", { results, type: mode, orderedMode });
   }, [
     canDraw,
     mode,
@@ -398,28 +401,30 @@ export default function HomeScreen() {
               CONFIGURAÇÕES DO SORTEIO
             </ThemedText>
             
-            <View style={styles.settingRow}>
-              <View style={styles.settingLabel}>
-                <View style={[styles.settingIcon, { backgroundColor: theme.accent + "15" }]}>
-                  <Feather name="award" size={18} color={theme.accent} />
+            {!orderedMode && (
+              <View style={styles.settingRow}>
+                <View style={styles.settingLabel}>
+                  <View style={[styles.settingIcon, { backgroundColor: theme.accent + "15" }]}>
+                    <Feather name="award" size={18} color={theme.accent} />
+                  </View>
+                  <View>
+                    <ThemedText style={{ fontWeight: "600" }}>Vencedores</ThemedText>
+                    <ThemedText type="small" style={{ color: theme.textSecondary }}>
+                      Quantidade a sortear
+                    </ThemedText>
+                  </View>
                 </View>
-                <View>
-                  <ThemedText style={{ fontWeight: "600" }}>Vencedores</ThemedText>
-                  <ThemedText type="small" style={{ color: theme.textSecondary }}>
-                    Quantidade a sortear
-                  </ThemedText>
-                </View>
+                <NumberInput
+                  value={winnersCount}
+                  onChange={setWinnersCount}
+                  min={1}
+                  max={10}
+                  compact
+                />
               </View>
-              <NumberInput
-                value={winnersCount}
-                onChange={setWinnersCount}
-                min={1}
-                max={10}
-                compact
-              />
-            </View>
+            )}
 
-            <View style={[styles.divider, { backgroundColor: theme.border }]} />
+            {!orderedMode && <View style={[styles.divider, { backgroundColor: theme.border }]} />}
 
             <View style={styles.settingRow}>
               <View style={styles.settingLabel}>
@@ -439,29 +444,25 @@ export default function HomeScreen() {
               />
             </View>
 
-            {winnersCount > 1 && (
-              <>
-                <View style={[styles.divider, { backgroundColor: theme.border }]} />
+            <View style={[styles.divider, { backgroundColor: theme.border }]} />
 
-                <View style={styles.settingRow}>
-                  <View style={styles.settingLabel}>
-                    <View style={[styles.settingIcon, { backgroundColor: "#8B5CF6" + "15" }]}>
-                      <Feather name="list" size={18} color="#8B5CF6" />
-                    </View>
-                    <View>
-                      <ThemedText style={{ fontWeight: "600" }}>Ranking</ThemedText>
-                      <ThemedText type="small" style={{ color: theme.textSecondary }}>
-                        Sortear com posições (1º, 2º, 3º...)
-                      </ThemedText>
-                    </View>
-                  </View>
-                  <ToggleSwitch
-                    value={orderedMode}
-                    onValueChange={setOrderedMode}
-                  />
+            <View style={styles.settingRow}>
+              <View style={styles.settingLabel}>
+                <View style={[styles.settingIcon, { backgroundColor: "#8B5CF6" + "15" }]}>
+                  <Feather name="list" size={18} color="#8B5CF6" />
                 </View>
-              </>
-            )}
+                <View>
+                  <ThemedText style={{ fontWeight: "600" }}>Ranking</ThemedText>
+                  <ThemedText type="small" style={{ color: theme.textSecondary }}>
+                    Sortear com posições (1º, 2º, 3º...)
+                  </ThemedText>
+                </View>
+              </View>
+              <ToggleSwitch
+                value={orderedMode}
+                onValueChange={setOrderedMode}
+              />
+            </View>
           </Card>
         </Animated.View>
 
