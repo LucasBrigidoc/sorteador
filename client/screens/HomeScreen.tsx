@@ -61,6 +61,7 @@ export default function HomeScreen() {
   const [maxNumber, setMaxNumber] = useState(100);
   const [winnersCount, setWinnersCount] = useState(1);
   const [allowRepetition, setAllowRepetition] = useState(false);
+  const [orderedMode, setOrderedMode] = useState(false);
 
   const pulseScale = useSharedValue(1);
   const pulseGlow = useSharedValue(0);
@@ -211,7 +212,7 @@ export default function HomeScreen() {
       results,
     });
 
-    navigation.navigate("DrawResult", { results, type: mode });
+    navigation.navigate("DrawResult", { results, type: mode, orderedMode: winnersCount > 1 && orderedMode });
   }, [
     canDraw,
     mode,
@@ -220,6 +221,7 @@ export default function HomeScreen() {
     maxNumber,
     winnersCount,
     allowRepetition,
+    orderedMode,
     addToHistory,
     navigation,
     settings.soundEnabled,
@@ -436,6 +438,30 @@ export default function HomeScreen() {
                 onValueChange={setAllowRepetition}
               />
             </View>
+
+            {winnersCount > 1 && (
+              <>
+                <View style={[styles.divider, { backgroundColor: theme.border }]} />
+
+                <View style={styles.settingRow}>
+                  <View style={styles.settingLabel}>
+                    <View style={[styles.settingIcon, { backgroundColor: "#8B5CF6" + "15" }]}>
+                      <Feather name="list" size={18} color="#8B5CF6" />
+                    </View>
+                    <View>
+                      <ThemedText style={{ fontWeight: "600" }}>Ranking</ThemedText>
+                      <ThemedText type="small" style={{ color: theme.textSecondary }}>
+                        Sortear com posições (1º, 2º, 3º...)
+                      </ThemedText>
+                    </View>
+                  </View>
+                  <ToggleSwitch
+                    value={orderedMode}
+                    onValueChange={setOrderedMode}
+                  />
+                </View>
+              </>
+            )}
           </Card>
         </Animated.View>
 

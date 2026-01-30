@@ -347,7 +347,7 @@ export default function DrawResultModal() {
   const { theme, isDark } = useTheme();
   const { settings } = useSettings();
 
-  const { results, type } = route.params;
+  const { results, type, orderedMode } = route.params;
 
   const [phase, setPhase] = useState<"intro" | "spinning" | "revealed">("intro");
   const [completedSlots, setCompletedSlots] = useState(0);
@@ -454,35 +454,73 @@ export default function DrawResultModal() {
               style={styles.resultHeader}
             >
               <View style={[styles.trophyContainer, { backgroundColor: theme.accent + "20" }]}>
-                <Feather name="award" size={48} color={theme.accent} />
+                <Feather name={orderedMode ? "bar-chart-2" : "award"} size={48} color={theme.accent} />
               </View>
               <ThemedText type="h2" style={{ color: "#FFFFFF", marginTop: Spacing.lg }}>
-                {results.length === 1 ? "Vencedor!" : "Vencedores!"}
+                {orderedMode ? "Ranking!" : results.length === 1 ? "Vencedor!" : "Vencedores!"}
               </ThemedText>
+              {orderedMode && (
+                <ThemedText type="small" style={{ color: "rgba(255,255,255,0.7)", marginTop: Spacing.xs }}>
+                  Posições sorteadas
+                </ThemedText>
+              )}
             </Animated.View>
 
             <View style={styles.resultsListContainer}>
-              {results.map((result, index) => (
-                <Animated.View
-                  key={`${result}-${index}`}
-                  entering={
-                    settings.animationsEnabled
-                      ? FadeInDown.delay(400 + index * 150).springify()
-                      : undefined
-                  }
-                  style={[styles.resultCard, { backgroundColor: theme.backgroundDefault }]}
-                >
-                  <View style={[styles.resultBadge, { backgroundColor: theme.accent }]}>
-                    <ThemedText type="body" style={{ color: "#FFFFFF", fontWeight: "700" }}>
-                      {index + 1}
+              {results.map((result, index) => {
+                const isFirst = index === 0;
+                const isSecond = index === 1;
+                const isThird = index === 2;
+                const badgeColor = orderedMode 
+                  ? isFirst ? "#FFD700" : isSecond ? "#C0C0C0" : isThird ? "#CD7F32" : theme.accent
+                  : theme.accent;
+                const positionLabel = orderedMode ? `${index + 1}º` : `${index + 1}`;
+                
+                return (
+                  <Animated.View
+                    key={`${result}-${index}`}
+                    entering={
+                      settings.animationsEnabled
+                        ? FadeInDown.delay(400 + index * 150).springify()
+                        : undefined
+                    }
+                    style={[
+                      styles.resultCard, 
+                      { backgroundColor: theme.backgroundDefault },
+                      orderedMode && isFirst && styles.firstPlaceCard,
+                    ]}
+                  >
+                    <View style={[
+                      styles.resultBadge, 
+                      { backgroundColor: badgeColor },
+                      orderedMode && isFirst && styles.firstPlaceBadge,
+                    ]}>
+                      <ThemedText 
+                        type={orderedMode && isFirst ? "body" : "small"} 
+                        style={{ color: "#FFFFFF", fontWeight: "700" }}
+                      >
+                        {positionLabel}
+                      </ThemedText>
+                    </View>
+                    <ThemedText 
+                      type={orderedMode && isFirst ? "h2" : "h3"} 
+                      style={[styles.resultText, { color: theme.text }]} 
+                      numberOfLines={1}
+                    >
+                      {result}
                     </ThemedText>
-                  </View>
-                  <ThemedText type="h3" style={[styles.resultText, { color: theme.text }]} numberOfLines={1}>
-                    {result}
-                  </ThemedText>
-                  <Feather name="star" size={20} color={theme.accent} />
-                </Animated.View>
-              ))}
+                    {orderedMode ? (
+                      <Feather 
+                        name={isFirst ? "award" : isSecond ? "star" : isThird ? "star" : "check"} 
+                        size={isFirst ? 24 : 20} 
+                        color={badgeColor} 
+                      />
+                    ) : (
+                      <Feather name="star" size={20} color={theme.accent} />
+                    )}
+                  </Animated.View>
+                );
+              })}
             </View>
           </Animated.View>
         )}
@@ -632,6 +670,14 @@ const styles = StyleSheet.create({
   resultsListContainer: {
     width: "100%",
     gap: Spacing.md,
+  },
+  firstPlaceCard: {
+    borderWidth: 2,
+    borderColor: "#FFD700",
+  },
+  firstPlaceBadge: {
+    width: 44,
+    height: 44,
   },
   resultCard: {
     flexDirection: "row",

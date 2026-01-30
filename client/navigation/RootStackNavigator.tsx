@@ -12,6 +12,7 @@ export type RootStackParamList = {
   DrawResult: {
     results: string[];
     type: "list" | "number";
+    orderedMode?: boolean;
   };
   RaffleDetail: {
     raffle: RaffleHistoryItem;

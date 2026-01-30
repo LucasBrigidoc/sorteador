@@ -1,10 +1,9 @@
 import React from "react";
-import { StyleSheet, Pressable } from "react-native";
+import { StyleSheet, Pressable, Platform } from "react-native";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withSpring,
-  withTiming,
   interpolateColor,
 } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
@@ -16,6 +15,7 @@ interface ToggleSwitchProps {
   value: boolean;
   onValueChange: (value: boolean) => void;
   disabled?: boolean;
+  testID?: string;
 }
 
 const TRACK_WIDTH = 51;
@@ -23,7 +23,7 @@ const TRACK_HEIGHT = 31;
 const THUMB_SIZE = 27;
 const THUMB_OFFSET = 2;
 
-export function ToggleSwitch({ value, onValueChange, disabled = false }: ToggleSwitchProps) {
+export function ToggleSwitch({ value, onValueChange, disabled = false, testID }: ToggleSwitchProps) {
   const { theme, isDark } = useTheme();
   const { settings } = useSettings();
 
@@ -39,7 +39,7 @@ export function ToggleSwitch({ value, onValueChange, disabled = false }: ToggleS
   const handlePress = () => {
     if (disabled) return;
 
-    if (settings.soundEnabled) {
+    if (settings.soundEnabled && Platform.OS !== "web") {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     }
     onValueChange(!value);
@@ -70,10 +70,14 @@ export function ToggleSwitch({ value, onValueChange, disabled = false }: ToggleS
     <Pressable
       onPress={handlePress}
       disabled={disabled}
+      testID={testID}
+      accessibilityRole="switch"
+      accessibilityState={{ checked: value }}
       style={[styles.container, disabled && styles.disabled]}
+      hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
     >
-      <Animated.View style={[styles.track, trackStyle]}>
-        <Animated.View style={[styles.thumb, thumbStyle]} />
+      <Animated.View style={[styles.track, trackStyle]} pointerEvents="none">
+        <Animated.View style={[styles.thumb, thumbStyle]} pointerEvents="none" />
       </Animated.View>
     </Pressable>
   );
@@ -82,6 +86,7 @@ export function ToggleSwitch({ value, onValueChange, disabled = false }: ToggleS
 const styles = StyleSheet.create({
   container: {
     justifyContent: "center",
+    cursor: "pointer" as any,
   },
   disabled: {
     opacity: 0.5,
