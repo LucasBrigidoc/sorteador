@@ -26,13 +26,14 @@ export default function MainTabNavigator() {
       screenOptions={{
         tabBarActiveTintColor: theme.link,
         tabBarInactiveTintColor: theme.tabIconDefault,
+        tabBarShowLabel: true,
         tabBarStyle: {
           backgroundColor: isDark ? "#1F2937" : "#FFFFFF",
           borderTopWidth: 1,
           borderTopColor: isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.05)",
-          height: Platform.OS === "ios" ? 90 : 70,
-          paddingBottom: Platform.OS === "ios" ? 30 : 12,
-          paddingTop: 10,
+          height: Platform.OS === "ios" ? 88 : 60,
+          paddingBottom: Platform.OS === "ios" ? 28 : 8,
+          paddingTop: 8,
           elevation: 8,
           shadowColor: "#000",
           shadowOffset: { width: 0, height: -2 },
@@ -55,25 +56,16 @@ export default function MainTabNavigator() {
         component={HomeStackNavigator}
         options={{
           title: "Sorteio",
-          tabBarLabel: ({ focused, color }) => (
-            <ThemedText style={{ color, fontSize: 11, fontWeight: focused ? "700" : "500", marginTop: 4 }}>
-              Sorteio
-            </ThemedText>
-          ),
-          tabBarIcon: ({ color, size, focused }) => (
-            <View style={focused ? {
-              backgroundColor: theme.link + "15",
-              paddingVertical: 6,
-              paddingHorizontal: 16,
-              borderRadius: 20,
-              alignItems: 'center',
-              justifyContent: 'center',
-            } : {
-              paddingVertical: 6,
-              alignItems: 'center',
-              justifyContent: 'center',
+          tabBarLabelStyle: { fontSize: 11, fontWeight: "500" },
+          tabBarIcon: ({ color, focused }) => (
+            <View style={{
+              backgroundColor: focused ? theme.link + "15" : "transparent",
+              paddingVertical: 4,
+              paddingHorizontal: 12,
+              borderRadius: 16,
+              marginBottom: 4,
             }}>
-              <Feather name="shuffle" size={24} color={color} />
+              <Feather name="shuffle" size={20} color={color} />
             </View>
           ),
         }}
@@ -83,25 +75,16 @@ export default function MainTabNavigator() {
         component={HistoryStackNavigator}
         options={{
           title: "Histórico",
-          tabBarLabel: ({ focused, color }) => (
-            <ThemedText style={{ color, fontSize: 11, fontWeight: focused ? "700" : "500", marginTop: 4 }}>
-              Histórico
-            </ThemedText>
-          ),
-          tabBarIcon: ({ color, size, focused }) => (
-            <View style={focused ? {
-              backgroundColor: theme.link + "15",
-              paddingVertical: 6,
-              paddingHorizontal: 16,
-              borderRadius: 20,
-              alignItems: 'center',
-              justifyContent: 'center',
-            } : {
-              paddingVertical: 6,
-              alignItems: 'center',
-              justifyContent: 'center',
+          tabBarLabelStyle: { fontSize: 11, fontWeight: "500" },
+          tabBarIcon: ({ color, focused }) => (
+            <View style={{
+              backgroundColor: focused ? theme.link + "15" : "transparent",
+              paddingVertical: 4,
+              paddingHorizontal: 12,
+              borderRadius: 16,
+              marginBottom: 4,
             }}>
-              <Feather name="clock" size={24} color={color} />
+              <Feather name="clock" size={20} color={color} />
             </View>
           ),
         }}
@@ -111,25 +94,16 @@ export default function MainTabNavigator() {
         component={SettingsStackNavigator}
         options={{
           title: "Ajustes",
-          tabBarLabel: ({ focused, color }) => (
-            <ThemedText style={{ color, fontSize: 11, fontWeight: focused ? "700" : "500", marginTop: 4 }}>
-              Ajustes
-            </ThemedText>
-          ),
-          tabBarIcon: ({ color, size, focused }) => (
-            <View style={focused ? {
-              backgroundColor: theme.link + "15",
-              paddingVertical: 6,
-              paddingHorizontal: 16,
-              borderRadius: 20,
-              alignItems: 'center',
-              justifyContent: 'center',
-            } : {
-              paddingVertical: 6,
-              alignItems: 'center',
-              justifyContent: 'center',
+          tabBarLabelStyle: { fontSize: 11, fontWeight: "500" },
+          tabBarIcon: ({ color, focused }) => (
+            <View style={{
+              backgroundColor: focused ? theme.link + "15" : "transparent",
+              paddingVertical: 4,
+              paddingHorizontal: 12,
+              borderRadius: 16,
+              marginBottom: 4,
             }}>
-              <Feather name="settings" size={24} color={color} />
+              <Feather name="settings" size={20} color={color} />
             </View>
           ),
         }}
