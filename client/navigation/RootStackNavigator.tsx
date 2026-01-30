@@ -11,7 +11,7 @@ export type RootStackParamList = {
   Main: undefined;
   DrawResult: {
     results: string[];
-    type: "list" | "number";
+    type: "list" | "number" | "secret_santa";
     orderedMode?: boolean;
   };
   RaffleDetail: {

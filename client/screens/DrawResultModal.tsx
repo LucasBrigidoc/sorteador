@@ -33,6 +33,9 @@ import { useSettings } from "@/context/SettingsContext";
 import { Spacing, BorderRadius } from "@/constants/theme";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
 
+import * as Sharing from "expo-sharing";
+import * as Print from "expo-print";
+
 type DrawResultRouteProp = RouteProp<RootStackParamList, "DrawResult">;
 
 const { width, height } = Dimensions.get("window");
@@ -388,6 +391,33 @@ export default function DrawResultModal() {
     navigation.goBack();
   };
 
+  const handleShareSecretSanta = async (pair: string) => {
+    const [giver, receiver] = pair.split(" ➔ ");
+    const html = `
+      <html>
+        <body style="font-family: sans-serif; padding: 40px; text-align: center;">
+          <h1 style="color: #2563EB;">Amigo Secreto</h1>
+          <p style="font-size: 18px; color: #666;">Olá <strong>${giver}</strong>,</p>
+          <p style="font-size: 22px;">O seu amigo secreto é:</p>
+          <div style="background: #F59E0B; color: white; padding: 20px; border-radius: 12px; font-size: 32px; font-weight: bold; margin: 20px 0;">
+            ${receiver}
+          </div>
+          <p style="color: #999;">Não conte para ninguém!</p>
+        </body>
+      </html>
+    `;
+    
+    try {
+      const { uri } = await Print.printToFileAsync({ html });
+      await Sharing.shareAsync(uri, {
+        mimeType: "application/pdf",
+        dialogTitle: `Amigo Secreto de ${giver}`,
+      });
+    } catch (error) {
+      console.error("Failed to share secret santa:", error);
+    }
+  };
+
   const overlayStyle = useAnimatedStyle(() => ({
     opacity: overlayOpacity.value,
   }));
@@ -509,7 +539,14 @@ export default function DrawResultModal() {
                     >
                       {result}
                     </ThemedText>
-                    {orderedMode ? (
+                    {type === "secret_santa" ? (
+                      <Pressable 
+                        onPress={() => handleShareSecretSanta(result)}
+                        style={{ padding: 8 }}
+                      >
+                        <Feather name="share-2" size={20} color={theme.link} />
+                      </Pressable>
+                    ) : orderedMode ? (
                       <Feather 
                         name={isFirst ? "award" : isSecond ? "star" : isThird ? "star" : "check"} 
                         size={isFirst ? 24 : 20} 

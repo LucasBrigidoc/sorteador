@@ -54,7 +54,7 @@ export default function HomeScreen() {
   const { addToHistory } = useRaffle();
   const { settings } = useSettings();
 
-  const [mode, setMode] = useState<"list" | "number">("list");
+  const [mode, setMode] = useState<"list" | "number" | "secret_santa">("list");
   const [inputText, setInputText] = useState("");
   const [items, setItems] = useState<string[]>([]);
   const [minNumber, setMinNumber] = useState(1);
@@ -68,8 +68,8 @@ export default function HomeScreen() {
   const shimmerPosition = useSharedValue(0);
 
   const canDraw =
-    mode === "list"
-      ? items.length > 0 && (orderedMode || allowRepetition || items.length >= winnersCount)
+    mode === "list" || mode === "secret_santa"
+      ? items.length > (mode === "secret_santa" ? 1 : 0) && (orderedMode || allowRepetition || items.length >= winnersCount)
       : maxNumber >= minNumber &&
         (orderedMode || allowRepetition || maxNumber - minNumber + 1 >= winnersCount);
 
@@ -185,7 +185,7 @@ export default function HomeScreen() {
     let results: string[] = [];
     let pool: string[] = [];
 
-    if (mode === "list") {
+    if (mode === "list" || mode === "secret_santa") {
       pool = [...items];
     } else {
       for (let i = minNumber; i <= maxNumber; i++) {
@@ -196,12 +196,21 @@ export default function HomeScreen() {
     // Se o modo de ranking (orderedMode) estiver ativado, sorteamos todos os itens da lista
     const finalWinnersCount = orderedMode ? pool.length : winnersCount;
 
-    for (let i = 0; i < finalWinnersCount; i++) {
-      if (pool.length === 0) break;
-      const randomIndex = Math.floor(Math.random() * pool.length);
-      results.push(pool[randomIndex]);
-      if (!allowRepetition) {
-        pool.splice(randomIndex, 1);
+    if (mode === "secret_santa") {
+      // Secret Santa logic: each person picks another
+      const shuffled = [...pool].sort(() => Math.random() - 0.5);
+      results = shuffled.map((person, i) => {
+        const picked = shuffled[(i + 1) % shuffled.length];
+        return `${person} ➔ ${picked}`;
+      });
+    } else {
+      for (let i = 0; i < finalWinnersCount; i++) {
+        if (pool.length === 0) break;
+        const randomIndex = Math.floor(Math.random() * pool.length);
+        results.push(pool[randomIndex]);
+        if (!allowRepetition) {
+          pool.splice(randomIndex, 1);
+        }
       }
     }
 
@@ -250,13 +259,16 @@ export default function HomeScreen() {
       >
         <Animated.View entering={FadeInDown.delay(100).springify()}>
           <SegmentedControl
-            options={["Lista", "Números"]}
-            selectedIndex={mode === "list" ? 0 : 1}
-            onChange={(index) => setMode(index === 0 ? "list" : "number")}
+            options={["Lista", "Números", "Amigo Secreto"]}
+            selectedIndex={mode === "list" ? 0 : mode === "number" ? 1 : 2}
+            onChange={(index) => {
+              const modes: Array<"list" | "number" | "secret_santa"> = ["list", "number", "secret_santa"];
+              setMode(modes[index]);
+            }}
           />
         </Animated.View>
 
-        {mode === "list" ? (
+        {mode === "list" || mode === "secret_santa" ? (
           <Animated.View entering={FadeInDown.delay(200).springify()} style={styles.section}>
             <Card elevation={1} style={styles.inputCard}>
               <TextInput
@@ -397,74 +409,76 @@ export default function HomeScreen() {
         )}
 
         <Animated.View entering={FadeInDown.delay(300).springify()}>
-          <Card elevation={1} style={styles.settingsCard}>
-            <ThemedText type="small" style={[styles.sectionLabel, { color: theme.textSecondary }]}>
-              CONFIGURAÇÕES DO SORTEIO
-            </ThemedText>
-            
-            {!orderedMode && (
+          {mode !== "secret_santa" && (
+            <Card elevation={1} style={styles.settingsCard}>
+              <ThemedText type="small" style={[styles.sectionLabel, { color: theme.textSecondary }]}>
+                CONFIGURAÇÕES DO SORTEIO
+              </ThemedText>
+              
+              {!orderedMode && (
+                <View style={styles.settingRow}>
+                  <View style={styles.settingLabel}>
+                    <View style={[styles.settingIcon, { backgroundColor: theme.accent + "15" }]}>
+                      <Feather name="award" size={18} color={theme.accent} />
+                    </View>
+                    <View>
+                      <ThemedText style={{ fontWeight: "600" }}>Vencedores</ThemedText>
+                      <ThemedText type="small" style={{ color: theme.textSecondary }}>
+                        Quantidade a sortear
+                      </ThemedText>
+                    </View>
+                  </View>
+                  <NumberInput
+                    value={winnersCount}
+                    onChange={setWinnersCount}
+                    min={1}
+                    max={mode === "list" ? Math.max(items.length, 1) : Math.max(maxNumber - minNumber + 1, 1)}
+                    compact
+                  />
+                </View>
+              )}
+
+              {!orderedMode && <View style={[styles.divider, { backgroundColor: theme.border }]} />}
+
               <View style={styles.settingRow}>
                 <View style={styles.settingLabel}>
-                  <View style={[styles.settingIcon, { backgroundColor: theme.accent + "15" }]}>
-                    <Feather name="award" size={18} color={theme.accent} />
+                  <View style={[styles.settingIcon, { backgroundColor: theme.success + "15" }]}>
+                    <Feather name="repeat" size={18} color={theme.success} />
                   </View>
                   <View>
-                    <ThemedText style={{ fontWeight: "600" }}>Vencedores</ThemedText>
+                    <ThemedText style={{ fontWeight: "600" }}>Repetição</ThemedText>
                     <ThemedText type="small" style={{ color: theme.textSecondary }}>
-                      Quantidade a sortear
+                      Permitir itens repetidos
                     </ThemedText>
                   </View>
                 </View>
-                <NumberInput
-                  value={winnersCount}
-                  onChange={setWinnersCount}
-                  min={1}
-                  max={mode === "list" ? Math.max(items.length, 1) : Math.max(maxNumber - minNumber + 1, 1)}
-                  compact
+                <ToggleSwitch
+                  value={allowRepetition}
+                  onValueChange={setAllowRepetition}
                 />
               </View>
-            )}
 
-            {!orderedMode && <View style={[styles.divider, { backgroundColor: theme.border }]} />}
+              <View style={[styles.divider, { backgroundColor: theme.border }]} />
 
-            <View style={styles.settingRow}>
-              <View style={styles.settingLabel}>
-                <View style={[styles.settingIcon, { backgroundColor: theme.success + "15" }]}>
-                  <Feather name="repeat" size={18} color={theme.success} />
+              <View style={styles.settingRow}>
+                <View style={styles.settingLabel}>
+                  <View style={[styles.settingIcon, { backgroundColor: "#8B5CF6" + "15" }]}>
+                    <Feather name="list" size={18} color="#8B5CF6" />
+                  </View>
+                  <View>
+                    <ThemedText style={{ fontWeight: "600" }}>Ranking</ThemedText>
+                    <ThemedText type="small" style={{ color: theme.textSecondary }}>
+                      Sortear com posições (1º, 2º, 3º...)
+                    </ThemedText>
+                  </View>
                 </View>
-                <View>
-                  <ThemedText style={{ fontWeight: "600" }}>Repetição</ThemedText>
-                  <ThemedText type="small" style={{ color: theme.textSecondary }}>
-                    Permitir itens repetidos
-                  </ThemedText>
-                </View>
+                <ToggleSwitch
+                  value={orderedMode}
+                  onValueChange={setOrderedMode}
+                />
               </View>
-              <ToggleSwitch
-                value={allowRepetition}
-                onValueChange={setAllowRepetition}
-              />
-            </View>
-
-            <View style={[styles.divider, { backgroundColor: theme.border }]} />
-
-            <View style={styles.settingRow}>
-              <View style={styles.settingLabel}>
-                <View style={[styles.settingIcon, { backgroundColor: "#8B5CF6" + "15" }]}>
-                  <Feather name="list" size={18} color="#8B5CF6" />
-                </View>
-                <View>
-                  <ThemedText style={{ fontWeight: "600" }}>Ranking</ThemedText>
-                  <ThemedText type="small" style={{ color: theme.textSecondary }}>
-                    Sortear com posições (1º, 2º, 3º...)
-                  </ThemedText>
-                </View>
-              </View>
-              <ToggleSwitch
-                value={orderedMode}
-                onValueChange={setOrderedMode}
-              />
-            </View>
-          </Card>
+            </Card>
+          )}
         </Animated.View>
 
         <Animated.View entering={FadeInDown.delay(400).springify()} style={styles.drawSection}>

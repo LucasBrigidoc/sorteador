@@ -4,7 +4,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 export interface RaffleHistoryItem {
   id: string;
   date: string;
-  type: "list" | "number";
+  type: "list" | "number" | "secret_santa";
   items: string[];
   minNumber?: number;
   maxNumber?: number;
