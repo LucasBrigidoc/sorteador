@@ -1,0 +1,121 @@
+Desenvolva um aplicativo de sorteador digital com foco em simplicidade, confiabilidade e ótima experiência do usuário. O aplicativo deve permitir a realização de sorteios de forma justa, transparente e intuitiva, atendendo tanto usuários comuns quanto usos profissionais. Abaixo estão os requisitos detalhados do sistema, organizados do ponto 1 ao ponto 5:
+
+1. Entrada de Dados
+
+O aplicativo deve permitir que o usuário insira os dados que participarão do sorteio de forma flexível e prática. As seguintes opções devem estar disponíveis:
+
+Inserção manual de itens em uma lista, podendo ser:
+
+Nomes de pessoas
+
+Números
+
+Palavras ou frases curtas
+
+Campo de texto que aceite múltiplos itens separados por quebra de linha ou vírgula
+
+Opção de colar listas diretamente da área de transferência
+
+Importação de arquivos nos formatos .CSV e .TXT
+
+Visualização da lista completa antes do sorteio
+
+Possibilidade de:
+
+Editar itens individualmente
+
+Remover itens específicos
+
+Limpar toda a lista com um único comando
+
+Validação automática para impedir sorteios com:
+
+Lista vazia
+
+Itens duplicados (quando o modo sem repetição estiver ativado)
+
+2. Configurações do Sorteio
+
+O aplicativo deve permitir personalização completa do sorteio por meio de configurações claras e acessíveis:
+
+Definição da quantidade de itens a serem sorteados (ex: 1 ou mais vencedores)
+
+Opção para ativar ou desativar a repetição de itens sorteados
+
+Configuração de pesos individuais, permitindo que determinados itens tenham maior probabilidade de serem sorteados
+
+Modo de sorteio numérico:
+
+Definição de intervalo mínimo e máximo
+
+Escolha se números podem ou não se repetir
+
+Validação das configurações para evitar conflitos (ex: número de vencedores maior que a quantidade de itens disponíveis)
+
+3. Execução do Sorteio
+
+A execução do sorteio deve ser clara, visualmente compreensível e transmitir confiança ao usuário:
+
+Botão central e destacado para iniciar o sorteio
+
+Animação visual durante o processo (rolagem de nomes, destaque progressivo ou efeito de suspense)
+
+Indicação visual de que o sorteio está em andamento
+
+Exibição do(s) item(ns) sorteado(s) em destaque após a conclusão
+
+Caso haja múltiplos vencedores, os resultados devem ser exibidos de forma organizada (lista ou cards)
+
+O sistema deve garantir que o algoritmo de sorteio seja verdadeiramente aleatório
+
+4. Histórico e Transparência
+
+O aplicativo deve manter um registro dos sorteios realizados, reforçando a confiabilidade do processo:
+
+Armazenamento do histórico de sorteios contendo:
+
+Data e hora
+
+Lista utilizada
+
+Configurações aplicadas
+
+Resultado final
+
+Opção para visualizar sorteios anteriores
+
+Possibilidade de repetir um sorteio com os mesmos parâmetros
+
+Opção de exportar o resultado do sorteio em formatos como:
+
+Texto
+
+PDF
+
+Compartilhamento direto
+
+O histórico deve ser salvo localmente no dispositivo do usuário
+
+5. Usabilidade e Design
+
+O design e a experiência do usuário devem ser prioridades no desenvolvimento do aplicativo:
+
+Interface limpa, moderna e intuitiva
+
+Navegação simples, com poucos passos até realizar um sorteio
+
+Layout responsivo, adaptado para dispositivos móveis
+
+Tipografia legível e elementos bem espaçados
+
+Feedback visual para ações do usuário (toques, confirmações, erros)
+
+Mensagens claras em caso de erro ou ação inválida
+
+Opção de ativar ou desativar sons e animações
+
+Suporte a tema claro e escuro
+
+Objetivo Geral
+
+O objetivo do aplicativo é permitir que qualquer usuário realize sorteios rápidos, confiáveis e transparentes, com controle total sobre os dados e configurações, sem exigir conhecimento técnico prévio.
