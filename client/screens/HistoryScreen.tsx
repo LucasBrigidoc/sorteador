@@ -212,6 +212,7 @@ export default function HistoryScreen() {
   return (
     <ThemedView style={styles.container}>
       <FlatList
+        scrollEnabled={history.length > 0}
         data={history}
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
