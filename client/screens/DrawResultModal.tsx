@@ -564,19 +564,6 @@ export default function DrawResultModal() {
         )}
       </View>
 
-      {phase === "revealed" && (
-        <Animated.View
-          entering={settings.animationsEnabled ? FadeIn.delay(800) : undefined}
-          style={[styles.closeButton, { top: insets.top + Spacing.lg }]}
-        >
-          <Pressable
-            onPress={handleClose}
-            style={[styles.closeButtonInner, { backgroundColor: "rgba(255,255,255,0.15)" }]}
-          >
-            <Feather name="x" size={24} color="#FFFFFF" />
-          </Pressable>
-        </Animated.View>
-      )}
 
       {phase === "revealed" && (
         <Animated.View
