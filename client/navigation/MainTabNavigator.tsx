@@ -30,9 +30,9 @@ export default function MainTabNavigator() {
           backgroundColor: isDark ? "#1F2937" : "#FFFFFF",
           borderTopWidth: 1,
           borderTopColor: isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.05)",
-          height: Platform.OS === "ios" ? 88 : 65,
-          paddingBottom: Platform.OS === "ios" ? 28 : 10,
-          paddingTop: 8,
+          height: Platform.OS === "ios" ? 90 : 70,
+          paddingBottom: Platform.OS === "ios" ? 30 : 12,
+          paddingTop: 10,
           elevation: 8,
           shadowColor: "#000",
           shadowOffset: { width: 0, height: -2 },
@@ -63,11 +63,17 @@ export default function MainTabNavigator() {
           tabBarIcon: ({ color, size, focused }) => (
             <View style={focused ? {
               backgroundColor: theme.link + "15",
-              paddingVertical: 4,
-              paddingHorizontal: 12,
+              paddingVertical: 6,
+              paddingHorizontal: 16,
               borderRadius: 20,
-            } : null}>
-              <Feather name="shuffle" size={20} color={color} />
+              alignItems: 'center',
+              justifyContent: 'center',
+            } : {
+              paddingVertical: 6,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+              <Feather name="shuffle" size={24} color={color} />
             </View>
           ),
         }}
@@ -85,11 +91,17 @@ export default function MainTabNavigator() {
           tabBarIcon: ({ color, size, focused }) => (
             <View style={focused ? {
               backgroundColor: theme.link + "15",
-              paddingVertical: 4,
-              paddingHorizontal: 12,
+              paddingVertical: 6,
+              paddingHorizontal: 16,
               borderRadius: 20,
-            } : null}>
-              <Feather name="clock" size={20} color={color} />
+              alignItems: 'center',
+              justifyContent: 'center',
+            } : {
+              paddingVertical: 6,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+              <Feather name="clock" size={24} color={color} />
             </View>
           ),
         }}
@@ -107,11 +119,17 @@ export default function MainTabNavigator() {
           tabBarIcon: ({ color, size, focused }) => (
             <View style={focused ? {
               backgroundColor: theme.link + "15",
-              paddingVertical: 4,
-              paddingHorizontal: 12,
+              paddingVertical: 6,
+              paddingHorizontal: 16,
               borderRadius: 20,
-            } : null}>
-              <Feather name="settings" size={20} color={color} />
+              alignItems: 'center',
+              justifyContent: 'center',
+            } : {
+              paddingVertical: 6,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+              <Feather name="settings" size={24} color={color} />
             </View>
           ),
         }}
