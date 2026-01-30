@@ -1,10 +1,17 @@
 import { Colors } from "@/constants/theme";
-import { useColorScheme } from "@/hooks/useColorScheme";
+import { useSettings } from "@/context/SettingsContext";
+import { useColorScheme as useDeviceColorScheme } from "react-native";
 
 export function useTheme() {
-  const colorScheme = useColorScheme();
+  const { settings } = useSettings();
+  const deviceColorScheme = useDeviceColorScheme();
+  
+  const colorScheme = settings.theme === "system" 
+    ? (deviceColorScheme ?? "light")
+    : settings.theme;
+    
   const isDark = colorScheme === "dark";
-  const theme = Colors[colorScheme ?? "light"];
+  const theme = Colors[colorScheme];
 
   return {
     theme,
