@@ -100,15 +100,19 @@ const styles = StyleSheet.create({
   },
   option: {
     flex: 1,
-    paddingVertical: Spacing.sm + 2,
-    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
+    paddingHorizontal: Spacing.xs,
     borderRadius: BorderRadius.xs,
     alignItems: "center",
     justifyContent: "center",
+    minHeight: 48,
   },
   selectedOption: {},
   optionText: {
     fontWeight: "500",
+    fontSize: 13,
+    textAlign: "center",
+    lineHeight: 16,
   },
   selectedText: {
     fontWeight: "700",
