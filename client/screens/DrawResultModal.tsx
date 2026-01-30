@@ -394,100 +394,59 @@ export default function DrawResultModal() {
 
   const handleShareSecretSanta = async (pair: string) => {
     const [giver, receiver] = pair.split(" ➔ ");
+    
+    // Simplificar HTML para evitar erros de renderização/impressão
     const html = `
+      <!DOCTYPE html>
       <html>
         <head>
-          <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+          <meta charset="utf-8">
           <style>
-            body {
-              font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-              padding: 0;
-              margin: 0;
+            body { 
+              margin: 0; 
+              padding: 40px; 
+              font-family: sans-serif; 
+              background-color: #0F172A; 
+              color: white;
               display: flex;
-              align-items: center;
               justify-content: center;
-              min-height: 100vh;
-              background-color: #0F172A;
-              color: #FFFFFF;
+              align-items: center;
+              height: 100vh;
             }
             .card {
               background-color: #1E293B;
-              padding: 40px 20px;
+              padding: 40px;
               border-radius: 24px;
               text-align: center;
-              box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
-              border: 1px solid rgba(255, 255, 255, 0.1);
-              width: 85%;
-              max-width: 350px;
+              width: 100%;
+              max-width: 400px;
+              border: 1px solid #334155;
             }
-            .title {
-              color: #3B82F6;
-              font-size: 20px;
-              font-weight: 800;
-              margin-bottom: 30px;
-              text-transform: uppercase;
-              letter-spacing: 2px;
+            .title { color: #3B82F6; font-size: 24px; font-weight: bold; margin-bottom: 20px; text-transform: uppercase; }
+            .text { font-size: 20px; margin-bottom: 30px; }
+            .highlight { 
+              background: #2563EB; 
+              padding: 30px; 
+              border-radius: 15px; 
+              font-size: 36px; 
+              font-weight: bold; 
+              margin: 20px 0;
             }
-            .main-text {
-              font-size: 24px;
-              line-height: 1.4;
-              margin-bottom: 30px;
-              color: #F8FAFC;
-            }
-            .giver-name {
-              color: #94A3B8;
-              font-weight: 500;
-              display: block;
-              margin-bottom: 8px;
-            }
-            .highlight-box {
-              background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
-              color: white;
-              padding: 35px 20px;
-              border-radius: 20px;
-              margin: 30px 0;
-              box-shadow: 0 10px 20px rgba(37, 99, 235, 0.4);
-            }
-            .receiver-label {
-              font-size: 12px;
-              text-transform: uppercase;
-              letter-spacing: 3px;
-              margin-bottom: 15px;
-              opacity: 0.9;
-              font-weight: 600;
-            }
-            .receiver-name {
-              font-size: 48px;
-              font-weight: 900;
-              word-wrap: break-word;
-            }
-            .warning-footer {
-              color: #F59E0B;
-              font-size: 14px;
-              font-weight: 600;
-              line-height: 1.5;
-              margin-top: 30px;
-              padding: 15px;
-              border-radius: 12px;
-              background-color: rgba(245, 158, 11, 0.15);
-              border: 1px solid rgba(245, 158, 11, 0.3);
-            }
+            .warning { color: #F59E0B; margin-top: 30px; font-weight: bold; }
           </style>
         </head>
         <body>
           <div class="card">
-            <div class="title">Amigo Secreto</div>
-            <div class="main-text">
-              <span class="giver-name">${giver}</span>
+            <div class="title">AMIGO SECRETO</div>
+            <div class="text">
+              <strong>${giver}</strong>,<br>
               você tirou:
             </div>
-            <div class="highlight-box">
-              <div class="receiver-label">Seu Amigo Secreto</div>
-              <div class="receiver-name">${receiver}</div>
+            <div class="highlight">
+              ${receiver}
             </div>
-            <div class="warning-footer">
-              🤫 Shhh! Guarde este segredo!<br/>
-              Não mostre para mais ninguém.
+            <div class="warning">
+              🤫 SHHH! GUARDE ESTE SEGREDO!
             </div>
           </div>
         </body>
@@ -495,13 +454,26 @@ export default function DrawResultModal() {
     `;
     
     try {
-      const { uri } = await Print.printToFileAsync({ html });
-      await Sharing.shareAsync(uri, {
-        mimeType: "application/pdf",
-        dialogTitle: `Amigo Secreto de ${giver}`,
+      console.log("Gerando PDF para:", giver, "->", receiver);
+      const { uri } = await Print.printToFileAsync({ 
+        html,
+        base64: false 
       });
+      console.log("PDF gerado em:", uri);
+      
+      const isAvailable = await Sharing.isAvailableAsync();
+      if (isAvailable) {
+        await Sharing.shareAsync(uri, {
+          mimeType: "application/pdf",
+          dialogTitle: `Amigo Secreto de ${giver}`,
+          UTI: "com.adobe.pdf"
+        });
+      } else {
+        alert("O compartilhamento não está disponível neste dispositivo.");
+      }
     } catch (error) {
-      console.error("Failed to share secret santa:", error);
+      console.error("Erro detalhado ao compartilhar:", error);
+      alert("Não foi possível gerar o arquivo. Tente novamente.");
     }
   };
 
