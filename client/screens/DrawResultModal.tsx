@@ -395,7 +395,7 @@ export default function DrawResultModal() {
   const handleShareSecretSanta = async (pair: string) => {
     const [giver, receiver] = pair.split(" ➔ ");
     
-    // Simplificar HTML para evitar erros de renderização/impressão
+    // HTML com duas páginas para evitar revelação acidental e design mais colorido
     const html = `
       <!DOCTYPE html>
       <html>
@@ -404,49 +404,108 @@ export default function DrawResultModal() {
           <style>
             body { 
               margin: 0; 
-              padding: 40px; 
-              font-family: sans-serif; 
-              background-color: #0F172A; 
-              color: white;
+              padding: 0; 
+              font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; 
+            }
+            .page {
+              height: 100vh;
+              width: 100vw;
               display: flex;
+              flex-direction: column;
               justify-content: center;
               align-items: center;
-              height: 100vh;
+              position: relative;
+              overflow: hidden;
+              page-break-after: always;
             }
-            .card {
-              background-color: #1E293B;
-              padding: 40px;
-              border-radius: 24px;
+            .bg-gradient {
+              position: absolute;
+              top: 0;
+              left: 0;
+              right: 0;
+              bottom: 0;
+              z-index: -1;
+            }
+            /* Capa - Página 1 */
+            .page-1 { background-color: #0F172A; color: white; }
+            .cover-card {
+              background: rgba(30, 41, 59, 0.7);
+              backdrop-filter: blur(10px);
+              padding: 60px 40px;
+              border-radius: 40px;
               text-align: center;
-              width: 100%;
-              max-width: 400px;
-              border: 1px solid #334155;
+              border: 2px solid #3B82F6;
+              box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
             }
-            .title { color: #3B82F6; font-size: 24px; font-weight: bold; margin-bottom: 20px; text-transform: uppercase; }
-            .text { font-size: 20px; margin-bottom: 30px; }
-            .highlight { 
-              background: #2563EB; 
-              padding: 30px; 
-              border-radius: 15px; 
-              font-size: 36px; 
-              font-weight: bold; 
-              margin: 20px 0;
+            .icon-box {
+              width: 80px;
+              height: 80px;
+              background: #3B82F6;
+              border-radius: 50%;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              margin: 0 auto 30px;
+              font-size: 40px;
             }
-            .warning { color: #F59E0B; margin-top: 30px; font-weight: bold; }
+            .title-main { font-size: 32px; font-weight: 900; margin-bottom: 15px; letter-spacing: 2px; color: #3B82F6; }
+            .subtitle { font-size: 18px; color: #94A3B8; margin-bottom: 40px; }
+            .scroll-down { font-size: 14px; color: #F59E0B; font-weight: bold; animation: pulse 2s infinite; }
+            
+            /* Resultado - Página 2 */
+            .page-2 { background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%); color: white; }
+            .result-card {
+              background: white;
+              padding: 60px 40px;
+              border-radius: 40px;
+              text-align: center;
+              width: 80%;
+              max-width: 450px;
+              box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.6);
+            }
+            .reveal-text { font-size: 22px; color: #475569; margin-bottom: 20px; }
+            .giver-name-big { font-size: 26px; font-weight: bold; color: #0F172A; margin-bottom: 40px; }
+            .winner-box {
+              background: linear-gradient(135deg, #2563EB 0%, #7C3AED 100%);
+              padding: 50px 30px;
+              border-radius: 30px;
+              color: white;
+              box-shadow: 0 20px 40px rgba(37, 99, 235, 0.4);
+            }
+            .label { font-size: 14px; text-transform: uppercase; letter-spacing: 4px; opacity: 0.8; margin-bottom: 20px; }
+            .receiver-name-big { font-size: 52px; font-weight: 900; text-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+            .secret-footer { margin-top: 50px; color: #EF4444; font-weight: 800; font-size: 16px; border: 2px dashed #EF4444; padding: 15px; border-radius: 15px; }
+
+            @keyframes pulse {
+              0% { transform: translateY(0); opacity: 0.6; }
+              50% { transform: translateY(10px); opacity: 1; }
+              100% { transform: translateY(0); opacity: 0.6; }
+            }
           </style>
         </head>
         <body>
-          <div class="card">
-            <div class="title">AMIGO SECRETO</div>
-            <div class="text">
-              <strong>${giver}</strong>,<br>
-              você tirou:
+          <!-- Página 1: Capa de Segurança -->
+          <div class="page page-1">
+            <div class="cover-card">
+              <div class="icon-box">🎁</div>
+              <div class="title-main">AMIGO SECRETO</div>
+              <div class="subtitle">Resultado exclusivo para:<br><strong>${giver}</strong></div>
+              <div class="scroll-down">↓ ROLE PARA BAIXO PARA VER ↓</div>
             </div>
-            <div class="highlight">
-              ${receiver}
-            </div>
-            <div class="warning">
-              🤫 SHHH! GUARDE ESTE SEGREDO!
+          </div>
+
+          <!-- Página 2: O Resultado -->
+          <div class="page page-2">
+            <div class="result-card">
+              <div class="reveal-text">Olá <strong>${giver}</strong>,</div>
+              <div class="reveal-text">o seu amigo secreto é...</div>
+              <div class="winner-box">
+                <div class="label">Você Tirou:</div>
+                <div class="receiver-name-big">${receiver}</div>
+              </div>
+              <div class="secret-footer">
+                ⚠️ NÃO MOSTRE ESTA PÁGINA PARA NINGUÉM!
+              </div>
             </div>
           </div>
         </body>
