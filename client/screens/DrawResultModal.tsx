@@ -421,58 +421,68 @@ export default function DrawResultModal() {
             }
             .title {
               color: #3B82F6;
-              font-size: 28px;
+              font-size: 24px;
               font-weight: 800;
-              margin-bottom: 8px;
+              margin-bottom: 24px;
               text-transform: uppercase;
               letter-spacing: 1px;
             }
-            .subtitle {
-              color: #94A3B8;
-              font-size: 16px;
+            .main-text {
+              font-size: 22px;
+              line-height: 1.4;
               margin-bottom: 32px;
+              color: #E2E8F0;
             }
-            .greeting {
-              font-size: 20px;
-              margin-bottom: 16px;
+            .giver-name {
+              color: #94A3B8;
+              font-weight: 400;
             }
-            .highlight {
+            .highlight-box {
               background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
               color: white;
-              padding: 24px;
-              border-radius: 16px;
-              font-size: 36px;
-              font-weight: 800;
+              padding: 32px 24px;
+              border-radius: 20px;
               margin: 24px 0;
               box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3);
             }
-            .warning {
+            .receiver-label {
+              font-size: 14px;
+              text-transform: uppercase;
+              letter-spacing: 2px;
+              margin-bottom: 12px;
+              opacity: 0.8;
+            }
+            .receiver-name {
+              font-size: 42px;
+              font-weight: 900;
+            }
+            .warning-footer {
               color: #F59E0B;
               font-size: 14px;
               font-weight: 600;
               margin-top: 32px;
-              padding: 12px;
-              border-radius: 8px;
+              padding: 16px;
+              border-radius: 12px;
               background-color: rgba(245, 158, 11, 0.1);
-            }
-            .footer {
-              margin-top: 40px;
-              font-size: 12px;
-              color: #64748B;
+              border: 1px solid rgba(245, 158, 11, 0.2);
             }
           </style>
         </head>
         <body>
           <div class="card">
             <div class="title">Amigo Secreto</div>
-            <div class="subtitle">Sorteio Realizado</div>
-            <div class="greeting">Olá, <strong>${giver}</strong>!</div>
-            <p style="color: #94A3B8;">O seu amigo secreto sorteado é:</p>
-            <div class="highlight">${receiver}</div>
-            <div class="warning">
-              ⚠️ Shhh! Guarde este segredo a sete chaves. Não conte para ninguém!
+            <div class="main-text">
+              <span class="giver-name">${giver}</span>,<br/>
+              você tirou:
             </div>
-            <div class="footer">Gerado pelo App Sorteio</div>
+            <div class="highlight-box">
+              <div class="receiver-label">Seu Par</div>
+              <div class="receiver-name">${receiver}</div>
+            </div>
+            <div class="warning-footer">
+              🤫 Guarde este segredo!<br/>
+              Não mostre para mais ninguém.
+            </div>
           </div>
         </body>
       </html>
