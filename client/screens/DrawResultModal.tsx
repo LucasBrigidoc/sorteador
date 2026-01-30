@@ -593,44 +593,48 @@ export default function DrawResultModal() {
                     style={[
                       styles.resultCard, 
                       { backgroundColor: theme.backgroundDefault },
-                      orderedMode && isFirst && styles.firstPlaceCard,
+                      type === "secret_santa" && styles.secretSantaCard,
                     ]}
                   >
                     <View style={[
                       styles.resultBadge, 
                       { backgroundColor: badgeColor },
-                      orderedMode && isFirst && styles.firstPlaceBadge,
                     ]}>
                       <ThemedText 
-                        type={orderedMode && isFirst ? "body" : "small"} 
+                        type="small" 
                         style={{ color: "#FFFFFF", fontWeight: "700" }}
                       >
                         {positionLabel}
                       </ThemedText>
                     </View>
-                    <ThemedText 
-                      type={orderedMode && isFirst ? "h2" : "h3"} 
-                      style={[styles.resultText, { color: theme.text }]} 
-                      numberOfLines={1}
-                    >
-                      {type === "secret_santa" ? result.split(" ➔ ")[0] : result}
-                    </ThemedText>
+                    <View style={{ flex: 1 }}>
+                      <ThemedText 
+                        type="h3" 
+                        style={[styles.resultText, { color: theme.text }]} 
+                        numberOfLines={1}
+                      >
+                        {type === "secret_santa" ? result.split(" ➔ ")[0] : result}
+                      </ThemedText>
+                      {type === "secret_santa" && (
+                        <ThemedText type="caption" style={{ color: theme.textSecondary }}>
+                          Toque em compartilhar para ver seu par
+                        </ThemedText>
+                      )}
+                    </View>
                     {type === "secret_santa" ? (
                       <Pressable 
                         onPress={() => handleShareSecretSanta(result)}
-                        style={{ padding: 8, flexDirection: 'row', alignItems: 'center', gap: 8 }}
+                        style={[styles.shareButton, { backgroundColor: theme.link + "15" }]}
                       >
-                        <ThemedText type="small" style={{ color: theme.link }}>Compartilhar</ThemedText>
-                        <Feather name="share-2" size={20} color={theme.link} />
+                        <ThemedText type="small" style={{ color: theme.link, fontWeight: "600" }}>Compartilhar</ThemedText>
+                        <Feather name="share-2" size={16} color={theme.link} />
                       </Pressable>
-                    ) : orderedMode ? (
+                    ) : (
                       <Feather 
-                        name={isFirst ? "award" : isSecond ? "star" : isThird ? "star" : "check"} 
-                        size={isFirst ? 24 : 20} 
+                        name={orderedMode ? (isFirst ? "award" : isSecond ? "star" : isThird ? "star" : "check") : "star"} 
+                        size={20} 
                         color={badgeColor} 
                       />
-                    ) : (
-                      <Feather name="star" size={20} color={theme.accent} />
                     )}
                   </Animated.View>
                 );
@@ -783,6 +787,18 @@ const styles = StyleSheet.create({
   firstPlaceBadge: {
     width: 44,
     height: 44,
+  },
+  secretSantaCard: {
+    paddingVertical: Spacing.md,
+    minHeight: 80,
+  },
+  shareButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.xs,
+    paddingVertical: Spacing.xs,
+    paddingHorizontal: Spacing.sm,
+    borderRadius: BorderRadius.xs,
   },
   resultCard: {
     flexDirection: "row",
