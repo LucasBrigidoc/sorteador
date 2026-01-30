@@ -397,6 +397,7 @@ export default function DrawResultModal() {
     const html = `
       <html>
         <head>
+          <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
           <style>
             body {
               font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
@@ -405,66 +406,71 @@ export default function DrawResultModal() {
               display: flex;
               align-items: center;
               justify-content: center;
-              height: 100vh;
+              min-height: 100vh;
               background-color: #0F172A;
               color: #FFFFFF;
             }
             .card {
               background-color: #1E293B;
-              padding: 40px;
+              padding: 40px 20px;
               border-radius: 24px;
               text-align: center;
-              box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+              box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
               border: 1px solid rgba(255, 255, 255, 0.1);
-              width: 80%;
-              max-width: 400px;
+              width: 85%;
+              max-width: 350px;
             }
             .title {
               color: #3B82F6;
-              font-size: 24px;
+              font-size: 20px;
               font-weight: 800;
-              margin-bottom: 24px;
+              margin-bottom: 30px;
               text-transform: uppercase;
-              letter-spacing: 1px;
+              letter-spacing: 2px;
             }
             .main-text {
-              font-size: 22px;
+              font-size: 24px;
               line-height: 1.4;
-              margin-bottom: 32px;
-              color: #E2E8F0;
+              margin-bottom: 30px;
+              color: #F8FAFC;
             }
             .giver-name {
               color: #94A3B8;
-              font-weight: 400;
+              font-weight: 500;
+              display: block;
+              margin-bottom: 8px;
             }
             .highlight-box {
               background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
               color: white;
-              padding: 32px 24px;
+              padding: 35px 20px;
               border-radius: 20px;
-              margin: 24px 0;
-              box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3);
+              margin: 30px 0;
+              box-shadow: 0 10px 20px rgba(37, 99, 235, 0.4);
             }
             .receiver-label {
-              font-size: 14px;
+              font-size: 12px;
               text-transform: uppercase;
-              letter-spacing: 2px;
-              margin-bottom: 12px;
-              opacity: 0.8;
+              letter-spacing: 3px;
+              margin-bottom: 15px;
+              opacity: 0.9;
+              font-weight: 600;
             }
             .receiver-name {
-              font-size: 42px;
+              font-size: 48px;
               font-weight: 900;
+              word-wrap: break-word;
             }
             .warning-footer {
               color: #F59E0B;
               font-size: 14px;
               font-weight: 600;
-              margin-top: 32px;
-              padding: 16px;
+              line-height: 1.5;
+              margin-top: 30px;
+              padding: 15px;
               border-radius: 12px;
-              background-color: rgba(245, 158, 11, 0.1);
-              border: 1px solid rgba(245, 158, 11, 0.2);
+              background-color: rgba(245, 158, 11, 0.15);
+              border: 1px solid rgba(245, 158, 11, 0.3);
             }
           </style>
         </head>
@@ -472,15 +478,15 @@ export default function DrawResultModal() {
           <div class="card">
             <div class="title">Amigo Secreto</div>
             <div class="main-text">
-              <span class="giver-name">${giver}</span>,<br/>
+              <span class="giver-name">${giver}</span>
               você tirou:
             </div>
             <div class="highlight-box">
-              <div class="receiver-label">Seu Par</div>
+              <div class="receiver-label">Seu Amigo Secreto</div>
               <div class="receiver-name">${receiver}</div>
             </div>
             <div class="warning-footer">
-              🤫 Guarde este segredo!<br/>
+              🤫 Shhh! Guarde este segredo!<br/>
               Não mostre para mais ninguém.
             </div>
           </div>
