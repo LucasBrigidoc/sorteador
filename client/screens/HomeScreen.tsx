@@ -475,7 +475,7 @@ export default function HomeScreen() {
                   <View>
                     <ThemedText style={{ fontWeight: "600" }}>Ranking</ThemedText>
                     <ThemedText type="small" style={{ color: theme.textSecondary }}>
-                      Sortear com posições (1º, 2º, 3º...)
+                      Sortear com posições
                     </ThemedText>
                   </View>
                 </View>
