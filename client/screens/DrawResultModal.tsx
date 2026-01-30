@@ -4,6 +4,7 @@ import {
   StyleSheet,
   Pressable,
   Dimensions,
+  ScrollView,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
@@ -496,7 +497,12 @@ export default function DrawResultModal() {
               )}
             </Animated.View>
 
-            <View style={styles.resultsListContainer}>
+            <ScrollView 
+              style={styles.resultsListScroll}
+              contentContainerStyle={styles.resultsListContent}
+              showsVerticalScrollIndicator={false}
+              overScrollMode="never"
+            >
               {results.map((result, index) => {
                 const isFirst = index === 0;
                 const isSecond = index === 1;
@@ -559,7 +565,7 @@ export default function DrawResultModal() {
                   </Animated.View>
                 );
               })}
-            </View>
+            </ScrollView>
           </Animated.View>
         )}
       </View>
@@ -692,9 +698,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  resultsListContainer: {
+  resultsListScroll: {
     width: "100%",
+    maxHeight: height * 0.5,
+  },
+  resultsListContent: {
     gap: Spacing.md,
+    paddingBottom: Spacing.md,
   },
   firstPlaceCard: {
     borderWidth: 2,
