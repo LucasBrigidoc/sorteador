@@ -2,7 +2,8 @@ import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Feather } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
-import { Platform, StyleSheet } from "react-native";
+import { Platform, StyleSheet, View } from "react-native";
+import { ThemedText } from "@/components/ThemedText";
 import HomeStackNavigator from "@/navigation/HomeStackNavigator";
 import HistoryStackNavigator from "@/navigation/HistoryStackNavigator";
 import SettingsStackNavigator from "@/navigation/SettingsStackNavigator";
@@ -27,12 +28,19 @@ export default function MainTabNavigator() {
         tabBarInactiveTintColor: theme.tabIconDefault,
         tabBarStyle: {
           position: "absolute",
-          backgroundColor: Platform.select({
-            ios: "transparent",
-            android: theme.backgroundRoot,
-          }),
+          backgroundColor: isDark ? "#1F2937" : "#FFFFFF",
           borderTopWidth: 0,
-          elevation: 0,
+          height: Platform.OS === "ios" ? 88 : 68,
+          paddingBottom: Platform.OS === "ios" ? 28 : 12,
+          paddingTop: 12,
+          marginHorizontal: 20,
+          bottom: 25,
+          borderRadius: 25,
+          shadowColor: "#000",
+          shadowOffset: { width: 0, height: 10 },
+          shadowOpacity: 0.1,
+          shadowRadius: 20,
+          elevation: 5,
         },
         tabBarBackground: () =>
           Platform.OS === "ios" ? (
@@ -50,8 +58,19 @@ export default function MainTabNavigator() {
         component={HomeStackNavigator}
         options={{
           title: "Sorteio",
-          tabBarIcon: ({ color, size }) => (
-            <Feather name="shuffle" size={size} color={color} />
+          tabBarLabel: ({ focused, color }) => (
+            <ThemedText style={{ color, fontSize: 11, fontWeight: focused ? "700" : "500", marginTop: 4 }}>
+              Sorteio
+            </ThemedText>
+          ),
+          tabBarIcon: ({ color, size, focused }) => (
+            <View style={focused ? {
+              backgroundColor: theme.link + "15",
+              padding: 8,
+              borderRadius: 12,
+            } : null}>
+              <Feather name="shuffle" size={focused ? 22 : 20} color={color} />
+            </View>
           ),
         }}
       />
@@ -60,8 +79,19 @@ export default function MainTabNavigator() {
         component={HistoryStackNavigator}
         options={{
           title: "Histórico",
-          tabBarIcon: ({ color, size }) => (
-            <Feather name="clock" size={size} color={color} />
+          tabBarLabel: ({ focused, color }) => (
+            <ThemedText style={{ color, fontSize: 11, fontWeight: focused ? "700" : "500", marginTop: 4 }}>
+              Histórico
+            </ThemedText>
+          ),
+          tabBarIcon: ({ color, size, focused }) => (
+            <View style={focused ? {
+              backgroundColor: theme.link + "15",
+              padding: 8,
+              borderRadius: 12,
+            } : null}>
+              <Feather name="clock" size={focused ? 22 : 20} color={color} />
+            </View>
           ),
         }}
       />
@@ -70,8 +100,19 @@ export default function MainTabNavigator() {
         component={SettingsStackNavigator}
         options={{
           title: "Ajustes",
-          tabBarIcon: ({ color, size }) => (
-            <Feather name="settings" size={size} color={color} />
+          tabBarLabel: ({ focused, color }) => (
+            <ThemedText style={{ color, fontSize: 11, fontWeight: focused ? "700" : "500", marginTop: 4 }}>
+              Ajustes
+            </ThemedText>
+          ),
+          tabBarIcon: ({ color, size, focused }) => (
+            <View style={focused ? {
+              backgroundColor: theme.link + "15",
+              padding: 8,
+              borderRadius: 12,
+            } : null}>
+              <Feather name="settings" size={focused ? 22 : 20} color={color} />
+            </View>
           ),
         }}
       />
