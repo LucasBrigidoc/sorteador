@@ -62,6 +62,8 @@ export default function SettingsScreen() {
           },
         ]}
         scrollIndicatorInsets={{ bottom: insets.bottom }}
+        showsVerticalScrollIndicator={false}
+        overScrollMode="never"
       >
         <Animated.View entering={FadeInDown.delay(100).springify()} style={styles.section}>
           <ThemedText type="small" style={[styles.sectionTitle, { color: theme.textSecondary }]}>
