@@ -5,7 +5,6 @@ import {
   TextInput,
   Pressable,
   ScrollView,
-  Image,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useHeaderHeight } from "@react-navigation/elements";
@@ -330,11 +329,9 @@ export default function HomeScreen() {
               </Card>
             ) : (
               <View style={styles.emptyState}>
-                <Image
-                  source={require("../../assets/images/empty-raffle.png")}
-                  style={styles.emptyImage}
-                  resizeMode="contain"
-                />
+                <View style={[styles.emptyIconContainer, { backgroundColor: theme.link + "15" }]}>
+                  <Feather name="users" size={40} color={theme.link} />
+                </View>
                 <ThemedText
                   type="h4"
                   style={[styles.emptyTitle, { color: theme.text }]}
@@ -580,10 +577,12 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing["3xl"],
     gap: Spacing.sm,
   },
-  emptyImage: {
-    width: 140,
-    height: 140,
-    opacity: 0.8,
+  emptyIconContainer: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    alignItems: "center",
+    justifyContent: "center",
     marginBottom: Spacing.md,
   },
   emptyTitle: {
