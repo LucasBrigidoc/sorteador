@@ -164,11 +164,9 @@ export default function HistoryScreen() {
   const ListEmptyComponent = useCallback(
     () => (
       <View style={styles.emptyState}>
-        <Image
-          source={require("../../assets/images/empty-history.png")}
-          style={styles.emptyImage}
-          resizeMode="contain"
-        />
+        <View style={[styles.emptyIconContainer, { backgroundColor: theme.link + "10" }]}>
+          <Feather name="clock" size={48} color={theme.link} />
+        </View>
         <ThemedText type="h4" style={[styles.emptyTitle, { fontFamily: "Nunito_700Bold" }]}>
           Nenhum sorteio ainda
         </ThemedText>
@@ -338,10 +336,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: Spacing["3xl"],
   },
-  emptyImage: {
-    width: 160,
-    height: 160,
-    opacity: 0.75,
+  emptyIconContainer: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    alignItems: "center",
+    justifyContent: "center",
     marginBottom: Spacing.lg,
   },
   emptyTitle: {
