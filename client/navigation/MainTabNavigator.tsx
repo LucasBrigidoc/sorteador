@@ -30,9 +30,9 @@ export default function MainTabNavigator() {
           backgroundColor: isDark ? "#1F2937" : "#FFFFFF",
           borderTopWidth: 1,
           borderTopColor: isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.05)",
-          height: Platform.OS === "ios" ? 95 : 75,
-          paddingBottom: Platform.OS === "ios" ? 35 : 15,
-          paddingTop: 12,
+          height: Platform.OS === "ios" ? 88 : 65,
+          paddingBottom: Platform.OS === "ios" ? 28 : 10,
+          paddingTop: 8,
           elevation: 8,
           shadowColor: "#000",
           shadowOffset: { width: 0, height: -2 },
@@ -63,10 +63,11 @@ export default function MainTabNavigator() {
           tabBarIcon: ({ color, size, focused }) => (
             <View style={focused ? {
               backgroundColor: theme.link + "15",
-              padding: 8,
-              borderRadius: 12,
+              paddingVertical: 4,
+              paddingHorizontal: 12,
+              borderRadius: 20,
             } : null}>
-              <Feather name="shuffle" size={focused ? 22 : 20} color={color} />
+              <Feather name="shuffle" size={20} color={color} />
             </View>
           ),
         }}
@@ -84,10 +85,11 @@ export default function MainTabNavigator() {
           tabBarIcon: ({ color, size, focused }) => (
             <View style={focused ? {
               backgroundColor: theme.link + "15",
-              padding: 8,
-              borderRadius: 12,
+              paddingVertical: 4,
+              paddingHorizontal: 12,
+              borderRadius: 20,
             } : null}>
-              <Feather name="clock" size={focused ? 22 : 20} color={color} />
+              <Feather name="clock" size={20} color={color} />
             </View>
           ),
         }}
@@ -105,10 +107,11 @@ export default function MainTabNavigator() {
           tabBarIcon: ({ color, size, focused }) => (
             <View style={focused ? {
               backgroundColor: theme.link + "15",
-              padding: 8,
-              borderRadius: 12,
+              paddingVertical: 4,
+              paddingHorizontal: 12,
+              borderRadius: 20,
             } : null}>
-              <Feather name="settings" size={focused ? 22 : 20} color={color} />
+              <Feather name="settings" size={20} color={color} />
             </View>
           ),
         }}
