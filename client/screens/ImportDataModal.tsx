@@ -146,7 +146,7 @@ export default function ImportDataModal() {
         </Card>
 
         {error && (
-          <Card elevation={1} style={[styles.errorCard, { backgroundColor: theme.error + "10" }]}>
+          <Card elevation={1} style={[styles.errorCard, { backgroundColor: theme.error + "10" } as any]}>
             <Feather name="alert-circle" size={20} color={theme.error} />
             <ThemedText style={{ color: theme.error, flex: 1 }}>{error}</ThemedText>
           </Card>
