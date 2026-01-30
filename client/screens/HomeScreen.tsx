@@ -418,7 +418,7 @@ export default function HomeScreen() {
                   value={winnersCount}
                   onChange={setWinnersCount}
                   min={1}
-                  max={10}
+                  max={mode === "list" ? Math.max(items.length, 1) : Math.max(maxNumber - minNumber + 1, 1)}
                   compact
                 />
               </View>
