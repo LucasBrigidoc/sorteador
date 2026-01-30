@@ -224,7 +224,14 @@ export default function HomeScreen() {
       results,
     });
 
-    navigation.navigate("DrawResult", { results, type: mode, orderedMode });
+    navigation.navigate("DrawResult", {
+      results,
+      type: mode,
+      orderedMode,
+      minNumber: mode === "number" ? minNumber : undefined,
+      maxNumber: mode === "number" ? maxNumber : undefined,
+      items: (mode === "list" || mode === "secret_santa") ? items : undefined,
+    });
   }, [
     canDraw,
     mode,

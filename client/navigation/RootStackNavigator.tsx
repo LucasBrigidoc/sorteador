@@ -13,6 +13,9 @@ export type RootStackParamList = {
     results: string[];
     type: "list" | "number" | "secret_santa";
     orderedMode?: boolean;
+    minNumber?: number;
+    maxNumber?: number;
+    items?: string[];
   };
   RaffleDetail: {
     raffle: RaffleHistoryItem;

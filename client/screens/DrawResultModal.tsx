@@ -350,7 +350,7 @@ export default function DrawResultModal() {
   const { theme, isDark } = useTheme();
   const { settings } = useSettings();
 
-  const { results, type, orderedMode } = route.params;
+  const { results, type, orderedMode, minNumber, maxNumber, items } = route.params;
 
   const [phase, setPhase] = useState<"intro" | "spinning" | "revealed">("intro");
   const [completedSlots, setCompletedSlots] = useState(0);
@@ -360,8 +360,8 @@ export default function DrawResultModal() {
   const introScale = useSharedValue(0.8);
 
   const allItems = type === "number" 
-    ? Array.from({ length: 20 }, () => Math.floor(Math.random() * 1000).toString())
-    : results;
+    ? Array.from({ length: 20 }, () => (Math.floor(Math.random() * ((maxNumber ?? 100) - (minNumber ?? 1) + 1)) + (minNumber ?? 1)).toString())
+    : items || results;
 
   useEffect(() => {
     overlayOpacity.value = withTiming(1, { duration: 400 });
