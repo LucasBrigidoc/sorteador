@@ -26,7 +26,6 @@ export default function MainTabNavigator() {
       screenOptions={{
         tabBarActiveTintColor: theme.link,
         tabBarInactiveTintColor: theme.tabIconDefault,
-        tabBarShowLabel: true,
         tabBarStyle: {
           backgroundColor: isDark ? "#1F2937" : "#FFFFFF",
           borderTopWidth: 1,
@@ -35,19 +34,7 @@ export default function MainTabNavigator() {
           paddingBottom: Platform.OS === "ios" ? 28 : 8,
           paddingTop: 8,
           elevation: 8,
-          shadowColor: "#000",
-          shadowOffset: { width: 0, height: -2 },
-          shadowOpacity: 0.05,
-          shadowRadius: 10,
         },
-        tabBarBackground: () =>
-          Platform.OS === "ios" ? (
-            <BlurView
-              intensity={100}
-              tint={isDark ? "dark" : "light"}
-              style={StyleSheet.absoluteFill}
-            />
-          ) : null,
         headerShown: false,
       }}
     >
@@ -56,17 +43,8 @@ export default function MainTabNavigator() {
         component={HomeStackNavigator}
         options={{
           title: "Sorteio",
-          tabBarLabelStyle: { fontSize: 11, fontWeight: "500" },
-          tabBarIcon: ({ color, focused }) => (
-            <View style={{
-              backgroundColor: focused ? theme.link + "15" : "transparent",
-              paddingVertical: 4,
-              paddingHorizontal: 12,
-              borderRadius: 16,
-              marginBottom: 4,
-            }}>
-              <Feather name="shuffle" size={20} color={color} />
-            </View>
+          tabBarIcon: ({ color, size }) => (
+            <Feather name="shuffle" size={24} color={color} />
           ),
         }}
       />
@@ -75,17 +53,8 @@ export default function MainTabNavigator() {
         component={HistoryStackNavigator}
         options={{
           title: "Histórico",
-          tabBarLabelStyle: { fontSize: 11, fontWeight: "500" },
-          tabBarIcon: ({ color, focused }) => (
-            <View style={{
-              backgroundColor: focused ? theme.link + "15" : "transparent",
-              paddingVertical: 4,
-              paddingHorizontal: 12,
-              borderRadius: 16,
-              marginBottom: 4,
-            }}>
-              <Feather name="clock" size={20} color={color} />
-            </View>
+          tabBarIcon: ({ color, size }) => (
+            <Feather name="clock" size={24} color={color} />
           ),
         }}
       />
@@ -94,17 +63,8 @@ export default function MainTabNavigator() {
         component={SettingsStackNavigator}
         options={{
           title: "Ajustes",
-          tabBarLabelStyle: { fontSize: 11, fontWeight: "500" },
-          tabBarIcon: ({ color, focused }) => (
-            <View style={{
-              backgroundColor: focused ? theme.link + "15" : "transparent",
-              paddingVertical: 4,
-              paddingHorizontal: 12,
-              borderRadius: 16,
-              marginBottom: 4,
-            }}>
-              <Feather name="settings" size={20} color={color} />
-            </View>
+          tabBarIcon: ({ color, size }) => (
+            <Feather name="settings" size={24} color={color} />
           ),
         }}
       />
