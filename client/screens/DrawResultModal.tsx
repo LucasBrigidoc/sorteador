@@ -396,14 +396,84 @@ export default function DrawResultModal() {
     const [giver, receiver] = pair.split(" ➔ ");
     const html = `
       <html>
-        <body style="font-family: sans-serif; padding: 40px; text-align: center;">
-          <h1 style="color: #2563EB;">Amigo Secreto</h1>
-          <p style="font-size: 18px; color: #666;">Olá <strong>${giver}</strong>,</p>
-          <p style="font-size: 22px;">O seu amigo secreto é:</p>
-          <div style="background: #F59E0B; color: white; padding: 20px; border-radius: 12px; font-size: 32px; font-weight: bold; margin: 20px 0;">
-            ${receiver}
+        <head>
+          <style>
+            body {
+              font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+              padding: 0;
+              margin: 0;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              height: 100vh;
+              background-color: #0F172A;
+              color: #FFFFFF;
+            }
+            .card {
+              background-color: #1E293B;
+              padding: 40px;
+              border-radius: 24px;
+              text-align: center;
+              box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+              border: 1px solid rgba(255, 255, 255, 0.1);
+              width: 80%;
+              max-width: 400px;
+            }
+            .title {
+              color: #3B82F6;
+              font-size: 28px;
+              font-weight: 800;
+              margin-bottom: 8px;
+              text-transform: uppercase;
+              letter-spacing: 1px;
+            }
+            .subtitle {
+              color: #94A3B8;
+              font-size: 16px;
+              margin-bottom: 32px;
+            }
+            .greeting {
+              font-size: 20px;
+              margin-bottom: 16px;
+            }
+            .highlight {
+              background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+              color: white;
+              padding: 24px;
+              border-radius: 16px;
+              font-size: 36px;
+              font-weight: 800;
+              margin: 24px 0;
+              box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3);
+            }
+            .warning {
+              color: #F59E0B;
+              font-size: 14px;
+              font-weight: 600;
+              margin-top: 32px;
+              padding: 12px;
+              border-radius: 8px;
+              background-color: rgba(245, 158, 11, 0.1);
+            }
+            .footer {
+              margin-top: 40px;
+              font-size: 12px;
+              color: #64748B;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="card">
+            <div class="title">Amigo Secreto</div>
+            <div class="subtitle">Sorteio Realizado</div>
+            <div class="greeting">Olá, <strong>${giver}</strong>!</div>
+            <p style="color: #94A3B8;">O seu amigo secreto sorteado é:</p>
+            <div class="highlight">${receiver}</div>
+            <div class="warning">
+              ⚠️ Shhh! Guarde este segredo a sete chaves. Não conte para ninguém!
+            </div>
+            <div class="footer">Gerado pelo App Sorteio</div>
           </div>
-          <p style="color: #999;">Não conte para ninguém!</p>
         </body>
       </html>
     `;
