@@ -537,13 +537,14 @@ export default function DrawResultModal() {
                       style={[styles.resultText, { color: theme.text }]} 
                       numberOfLines={1}
                     >
-                      {result}
+                      {type === "secret_santa" ? result.split(" ➔ ")[0] : result}
                     </ThemedText>
                     {type === "secret_santa" ? (
                       <Pressable 
                         onPress={() => handleShareSecretSanta(result)}
-                        style={{ padding: 8 }}
+                        style={{ padding: 8, flexDirection: 'row', alignItems: 'center', gap: 8 }}
                       >
+                        <ThemedText type="small" style={{ color: theme.link }}>Compartilhar</ThemedText>
                         <Feather name="share-2" size={20} color={theme.link} />
                       </Pressable>
                     ) : orderedMode ? (
