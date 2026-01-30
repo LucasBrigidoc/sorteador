@@ -121,6 +121,7 @@ export default function ImportDataModal() {
           },
         ]}
         showsVerticalScrollIndicator={false}
+        overScrollMode="never"
       >
         <Card elevation={1} style={styles.uploadCard}>
           <Pressable style={styles.uploadArea} onPress={handlePickFile}>

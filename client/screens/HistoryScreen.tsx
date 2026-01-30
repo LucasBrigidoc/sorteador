@@ -229,6 +229,7 @@ export default function HistoryScreen() {
         ListEmptyComponent={ListEmptyComponent}
         ListHeaderComponent={ListHeaderComponent}
         showsVerticalScrollIndicator={false}
+        overScrollMode="never"
         ItemSeparatorComponent={() => <View style={styles.separator} />}
       />
     </ThemedView>

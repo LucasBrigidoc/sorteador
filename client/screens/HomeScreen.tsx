@@ -246,6 +246,7 @@ export default function HomeScreen() {
         scrollIndicatorInsets={{ bottom: insets.bottom }}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
+        overScrollMode="never"
       >
         <Animated.View entering={FadeInDown.delay(100).springify()}>
           <SegmentedControl

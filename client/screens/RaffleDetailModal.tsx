@@ -209,6 +209,7 @@ export default function RaffleDetailModal() {
           },
         ]}
         showsVerticalScrollIndicator={false}
+        overScrollMode="never"
       >
         <View style={styles.header}>
           <ThemedText type="small" style={{ color: theme.textSecondary }}>
